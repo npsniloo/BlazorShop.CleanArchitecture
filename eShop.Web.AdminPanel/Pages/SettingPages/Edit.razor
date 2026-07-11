@@ -1,0 +1,179 @@
+﻿@page "/settings"
+@inject IGetMainSettingUseCase GetMainSettingUseCase
+@inject IUpdateSettingsUseCase UpdateSettingsUseCase
+@inject IFileHelperService FileService
+@inject IOptions<ImagesSettings> Options
+@inject NavigationManager NavigationManager
+@inject PreloadService PreloadService
+@rendermode InteractiveServer
+
+<PageTitle>Edit</PageTitle>
+
+
+<h2>Setting</h2>
+<hr />
+@if (Setting is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <br />
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger" role=alert>
+            @errorMessage
+        </div>
+    }
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Setting" OnValidSubmit="UpdateSettings" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert" />
+                <input type="hidden" name="Setting.Id" value="@Setting.Id" />
+                <div class="mb-3">
+                    <label for="shipping" class="form-label">Shipping:</label>
+                    <InputNumber id="shipping" @bind-Value="Setting.Shipping" class="form-control" />
+                    <ValidationMessage For="() => Setting.Shipping" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title:</label>
+                    <InputText id="title" @bind-Value="Setting.Title" class="form-control" />
+                    <ValidationMessage For="() => Setting.Title" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="address" class="form-label">Address:</label>
+                    <InputText id="address" @bind-Value="Setting.Address" class="form-control" />
+                    <ValidationMessage For="() => Setting.Address" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <InputText id="email" @bind-Value="Setting.Email" class="form-control" />
+                    <ValidationMessage For="() => Setting.Email" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone:</label>
+                    <InputText id="phone" @bind-Value="Setting.Phone" class="form-control" />
+                    <ValidationMessage For="() => Setting.Phone" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="copyright" class="form-label">CopyRight:</label>
+                    <InputText id="copyright" @bind-Value="Setting.CopyRight" class="form-control" />
+                    <ValidationMessage For="() => Setting.CopyRight" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="instagram" class="form-label">Instagram:</label>
+                    <InputText id="instagram" @bind-Value="Setting.Instagram" class="form-control" />
+                    <ValidationMessage For="() => Setting.Instagram" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="facebook" class="form-label">FaceBook:</label>
+                    <InputText id="facebook" @bind-Value="Setting.FaceBook" class="form-control" />
+                    <ValidationMessage For="() => Setting.FaceBook" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="googleplus" class="form-label">GooglePlus:</label>
+                    <InputText id="googleplus" @bind-Value="Setting.GooglePlus" class="form-control" />
+                    <ValidationMessage For="() => Setting.GooglePlus" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="youtube" class="form-label">Youtube:</label>
+                    <InputText id="youtube" @bind-Value="Setting.Youtube" class="form-control" />
+                    <ValidationMessage For="() => Setting.Youtube" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="twitter" class="form-label">Twitter:</label>
+                    <InputText id="twitter" @bind-Value="Setting.Twitter" class="form-control" />
+                    <ValidationMessage For="() => Setting.Twitter" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="logo" class="form-label">Logo:</label>
+                    <InputFile OnChange="LoadFile" class="form-control" />
+                    <br />
+                    <img src="/images/@Setting.Logo" style="max-width:150px" class="img-thumbnail" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+
+            </EditForm>
+
+           
+        </div>
+    </div>
+}
+
+
+
+@code {
+
+    private string errorMessage { get; set; } = string.Empty;
+
+    [SupplyParameterFromForm]
+    private Setting? Setting { get; set; }
+
+    private IBrowserFile UploadedFile { get; set; }
+
+    private void LoadFile(InputFileChangeEventArgs e)
+    {
+        UploadedFile = e.File;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Setting ??= await GetMainSettingUseCase.ExecuteAsync();
+
+        if (Setting is null)
+        {
+            Setting = new Setting
+            {
+                Address = "",
+                CopyRight = "",
+                Email = "",
+                FaceBook = "",
+                GooglePlus = "",
+                Instagram = "",
+                Shipping = 0,
+                Twitter = "",
+                Youtube = "",
+                Title = ""
+            };
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async void UpdateSettings()
+    {
+        //------------Loading--------------------
+        PreloadService.Show(SpinnerColor.Light, "Saving Settings... Please Wait...");
+        
+        try
+        {
+            if (Setting!.Logo != null)
+                FileService.DeleteImage(Options.Value.LogoPath, Setting.Logo);
+
+            //upload logo image
+            if (UploadedFile != null)
+            {
+                var uniqueFileName = FileService.GetUniqueFileName(UploadedFile);
+
+                Setting.Logo = uniqueFileName;
+
+                using var stream = UploadedFile.OpenReadStream();
+
+                await FileService.UploadImageAsync(stream, Options.Value.LogoPath, uniqueFileName);
+            }
+            var command = new UpdateSettingsCommand(Setting!);
+
+            await UpdateSettingsUseCase.ExecuteAsync(command);
+            
+            NavigationManager.NavigateTo("/admin");
+
+        }
+        catch
+        {
+            errorMessage = "Error updating settings.";
+            StateHasChanged();
+        }
+
+    }
+}

@@ -1,0 +1,56 @@
+﻿@page "/banners/details/{Id:int}"
+@inject NavigationManager NavigationManager
+@inject IGetBannerByIdUseCase GetBannerUseCase
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Banner</h2>
+    <hr />
+    @if (banner is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-2">Title</dt>
+            <dd class="col-sm-10">@banner.Title</dd>
+            <dt class="col-sm-2">SubTitle</dt>
+            <dd class="col-sm-10">@banner.SubTitle</dd>
+            <dt class="col-sm-2">ImageName</dt>
+            <dd class="col-sm-10">@banner.ImageName</dd>
+            <dt class="col-sm-2">Priority</dt>
+            <dd class="col-sm-10">@banner.Priority</dd>
+            <dt class="col-sm-2">Link</dt>
+            <dd class="col-sm-10">@banner.Link</dd>
+            <dt class="col-sm-2">Position</dt>
+            <dd class="col-sm-10">@banner.Position</dd>
+        </dl>
+        <div>
+            <a href="@($"/banners/edit/{banner.Id}")">Edit</a> |
+            <a href="@($"/banners")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+
+    private Banner? banner;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        banner = await GetBannerUseCase.ExecuteAsync(Id);
+
+        if (banner is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

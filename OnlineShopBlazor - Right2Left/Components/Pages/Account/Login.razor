@@ -1,0 +1,81 @@
+﻿@page "/login"
+@inject IValidator<LoginViewModel> Validator
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>Login</PageTitle>
+
+
+<hr />
+<div class="row" style="margin-top:150px">
+    <div class="col-md-4 mx-auto border">
+        @if (!string.IsNullOrEmpty(Message))
+        {
+            <div class="alert alert-info">@Message</div>
+        }
+        <EditForm method="post" Model="LoginModel" OnValidSubmit="HandleValidSubmit" FormName="login" Enhance>
+            <FluentValidationValidator Validator="Validator" />
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger" role=alert>
+                    @errorMessage
+                </div>
+            }
+            <div class="mb-3">
+                <label for="email" class="form-label">ایمیل:</label>
+                <InputText id="email" @bind-Value="LoginModel.Email" class="form-control" />
+                <ValidationMessage For="() => LoginModel.Email" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">پسورد:</label>
+                <input id="password" type="password" @bind="LoginModel.Password" class="form-control" />
+                <ValidationMessage For="() => LoginModel.Password" class="text-danger" />
+            </div>
+
+            <button type="submit" class="btn btn-primary" disabled="@(loading ? "disabled" : null)">
+                @if (loading)
+                {
+                    <Spinner Class="me-3" Type="SpinnerType.Dots" Color="SpinnerColor.Light" />
+
+                }
+                else
+                {
+                    <span>
+                        ورود
+                    </span>
+                }
+            </button>
+        </EditForm>
+
+        <div>
+            <a href="/register">میخواهید حساب بسازید؟ ثبت نام </a>
+        </div>
+        <div>
+            <a href="/recovery">رمز عبور خود را فراموش کرده‌اید؟ بازیابی رمز عبور </a>
+        </div>
+    </div>
+</div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+@code {
+
+    [SupplyParameterFromForm]
+    public LoginViewModel LoginModel { get; set; } = new();
+    [SupplyParameterFromQuery(Name = "message")]
+    public string? Message { get; set; }
+
+    private string? errorMessage = null;
+    private bool loading = false;
+
+    private async Task HandleValidSubmit()
+    {
+        loading = true;
+        await Task.Delay(1500);
+        await JS.InvokeVoidAsync("submitLoginForm", LoginModel.Email, LoginModel.Password);
+
+    }
+}

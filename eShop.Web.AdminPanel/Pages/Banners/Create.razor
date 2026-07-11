@@ -1,0 +1,107 @@
+﻿@page "/banners/create"
+@inject NavigationManager NavigationManager
+@inject IAddBannerUseCase AddBannerUseCase
+@inject IFileHelperService FileService
+@inject IOptions<ImagesSettings> Options
+@inject PreloadService PreloadService;
+
+@rendermode InteractiveServer
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Banner</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Banner" OnValidSubmit="AddBanner" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="mb-3">
+                <label for="title" class="form-label">Title:</label>
+                <InputTextArea id="title" rows="4" @bind-Value="Banner.Title" class="form-control" />
+                <ValidationMessage For="() => Banner.Title" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="subtitle" class="form-label">SubTitle:</label>
+                <InputTextArea id="subtitle" rows="4" @bind-Value="Banner.SubTitle" class="form-control" />
+                <ValidationMessage For="() => Banner.SubTitle" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="imagename" class="form-label">Image:</label>
+                @* <InputText id="imagename" @bind-Value="Banner.ImageName" class="form-control" /> *@
+                <InputFile OnChange="LoadFile" class="form-control" />
+                <ValidationMessage For="() => Banner.ImageName" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="priority" class="form-label">Priority:</label>
+                <InputNumber id="priority" @bind-Value="Banner.Priority" class="form-control" />
+                <ValidationMessage For="() => Banner.Priority" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="link" class="form-label">Link:</label>
+                <InputText id="link" @bind-Value="Banner.Link" class="form-control" />
+                <ValidationMessage For="() => Banner.Link" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="position" class="form-label">Position:</label>
+                <InputSelect id="position" @bind-Value="Banner.Position" class="form-control">
+                    <option>Select...</option>
+                    <option value="Slider">Slider</option>
+                    <option value="Banner1">Banner1</option>
+                    <option value="Banner2">Banner2</option>
+                </InputSelect>
+                <ValidationMessage For="() => Banner.Position" class="text-danger" />
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/banners">Back to List</a>
+</div>
+<Preload LoadingText="Loading..." />
+
+
+@code {
+
+    [SupplyParameterFromForm]
+    private Banner Banner { get; set; } = new();
+    private IBrowserFile UploadedFile { get; set; }
+
+    private void LoadFile(InputFileChangeEventArgs e)
+    {
+        UploadedFile = e.File;
+    }
+    private async Task AddBanner()
+    {
+        //------------Loading--------------------
+        PreloadService.Show(SpinnerColor.Light, "Saving Product... Please Wait...");
+
+        try
+        {
+            if (UploadedFile != null)
+            {
+                var uniqueFileName = FileService.GetUniqueFileName(UploadedFile);
+                Banner.ImageName = uniqueFileName;
+                using var stream = UploadedFile.OpenReadStream();
+                await FileService.UploadImageAsync(stream, Options.Value.BannersPath, uniqueFileName);
+            }
+
+            await AddBannerUseCase.ExecuteAsync(new AddBannerCommand(Banner));
+
+            PreloadService.Hide();
+            NavigationManager.NavigateTo("/banners");
+        }
+        catch (Exception ex)
+        {
+            PreloadService.Hide();
+
+        }
+
+    }
+   
+
+}

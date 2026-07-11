@@ -1,0 +1,162 @@
+﻿@page "/user/orders/details"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject IGetCustomerOrderByIdUseCase GetCustomerOrderById
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize]
+
+
+<PageTitle>جزئیات</PageTitle>
+<div class="container">
+
+   
+    @if (order is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <h3>جزئیات کالا</h3>
+        <hr />
+        <table class="table table-responsive">
+            <thead>
+                <tr>
+                    <th>عنوان</th>
+                    <th>قیمت</th>
+                    <th>تعداد</th>
+                    <th>جمع</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in OrderDetails)
+                {
+                    <tr>
+                        <td>@item.ProductTitle</td>
+                        <td>@item.ProductPrice.ToString("N0")</td>
+                        <td>@item.Count</td>
+                        <td>@((item.Count * item.ProductPrice).ToString("N0"))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+        <h3>اطلاعات سفارش</h3>
+        <hr />
+        <table class="table table-responsive">
+            <tr>
+                <th>شناسه</th>
+                <td>@order.Id</td>
+            </tr>
+            <tr>
+                <th>نام</th>
+                <td>@order.FirstName</td>
+            </tr>
+            <tr>
+                <th>نام خانوادگی</th>
+                <td>@order.LastName</td>
+            </tr>
+            <tr>
+                <th>نام شرکت</th>
+                <td>@order.CompanyName</td>
+            </tr>
+            <tr>
+                <th>کشور</th>
+                <td>@order.Country</td>
+            </tr>
+            <tr>
+                <th>شهر</th>
+                <td>@order.City</td>
+            </tr>
+            <tr>
+                <th>آدرس</th>
+                <td>@order.Address</td>
+            </tr>
+            <tr>
+                <th>ایمیل</th>
+                <td>@order.Email</td>
+            </tr>
+            <tr>
+                <th>موبایل</th>
+                <td>@order.Phone</td>
+            </tr>
+            <tr>
+                <th>توضیحات</th>
+                <td>@order.Comment</td>
+            </tr>
+            <tr>
+                <th>کدتخفیف</th>
+                <td>@order.CouponCode</td>
+            </tr>
+            <tr>
+                <th>مبلغ تخفیف</th>
+                <td>@order.CouponDiscount</td>
+            </tr>
+            <tr>
+                <th>هزینه ارسال</th>
+                <td>@order.Shipping?.ToString("N0")</td>
+            </tr>
+            <tr>
+                <th>جمع</th>
+                <td>@order.SubTotal?.ToString("N0")</td>
+            </tr>
+            <tr>
+                <th>جمع کل</th>
+                <td>@order.Total?.ToString("N0")</td>
+            </tr>
+            <tr>
+                <th>تاریخ</th>
+                <td>@order.CreateDate?.ToString("yyyy/MM/dd")</td>
+            </tr>
+            <tr>
+                <th>شناسه تراکنش</th>
+                <td>@order.TransactionId</td>
+            </tr>
+            <tr>
+                <th>وضعیت تراکنش</th>
+                <td>@order.TransactionStatus</td>
+            </tr>
+        </table>
+
+        <div>
+            <a class="text-success" href="@($"/user/orders")">بازگشت به لیست</a>
+        </div>
+    }
+</div>
+@code {
+    private Order? order;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+    private List<OrderDetail> OrderDetails;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userId = await GetUserIdAsync();
+        try
+        {
+            OrderDetails = await GetCustomerOrderById.ExecuteAsync(Id, userId);
+        }
+        catch
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+
+    }
+    private async Task<int> GetUserIdAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(userIdClaim, out int userId) == true)
+            {
+                return userId;
+            }
+        }
+        return 0;
+    }
+}

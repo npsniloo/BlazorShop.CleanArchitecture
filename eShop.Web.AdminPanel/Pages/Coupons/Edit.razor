@@ -1,0 +1,78 @@
+﻿@page "/coupons/edit"
+@inject IGetCouponByIdUseCase GetCouponByIdUseCase
+@inject IUpdateCouponUseCase UpdateCouponUseCase
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Coupon</h2>
+<hr />
+@if (Coupon is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Coupon" OnValidSubmit="UpdateCoupon" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert" />
+                <input type="hidden" name="Coupon.Id" value="@Coupon.Id" />
+                <div class="mb-3">
+                    <label for="code" class="form-label">Code:</label>
+                    <InputText id="code" @bind-Value="Coupon.Code" class="form-control" />
+                    <ValidationMessage For="() => Coupon.Code" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="discount" class="form-label">Discount:</label>
+                    <InputNumber id="discount" @bind-Value="Coupon.Discount" class="form-control" />
+                    <ValidationMessage For="() => Coupon.Discount" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/coupons">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Coupon? Coupon { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Coupon ??= await GetCouponByIdUseCase.ExecuteAsync(Id);
+
+        if (Coupon is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateCoupon()
+    {
+        try
+        {
+            await UpdateCouponUseCase.ExecuteAsync(new UpdateCouponCommand(Coupon));
+        }
+        catch
+        {
+            throw;
+        }
+
+        NavigationManager.NavigateTo("/coupons");
+    }
+
+    
+}

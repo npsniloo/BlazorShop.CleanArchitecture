@@ -1,0 +1,26 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using BlazorBootstrap
+
+@using eShop.Application.Interfaces.Services
+@using eShop.Application.UseCases.Admin_Portal.Banners
+@using eShop.Application.UseCases.Admin_Portal.Comments
+@using eShop.Application.UseCases.Admin_Portal.Coupons
+@using eShop.Application.UseCases.Admin_Portal.Menus
+@using eShop.Application.UseCases.Admin_Portal.Orders
+@using eShop.Application.UseCases.Admin_Portal.Users
+@using eShop.Application.UseCases.Admin_Portal.Settings
+@using eShop.Application.UseCases.Admin_Portal.Products
+
+@using eShop.Domain.Entities
+
+@using Microsoft.Extensions.Options
+@attribute [Authorize(Roles = "admin")]
+@layout AdminPanel.Pages.Layout.AdminLayout

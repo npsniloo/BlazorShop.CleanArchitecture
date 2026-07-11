@@ -1,0 +1,56 @@
+﻿@page "/users"
+@inject IGetUsersUseCase GetUsersUseCase
+@rendermode InteractiveServer
+
+<PageTitle>Users</PageTitle>
+
+<h1>Users</h1>
+
+<p>
+    <a class="btn btn-info  p-1" href="users/create">Create New</a>
+</p>
+
+<Grid TItem="User"
+      Class="table table-hover table-bordered table-striped"
+      DataProvider="UsersDataProvider"
+      AllowFiltering="false"
+      AllowPaging="false"
+      AllowSorting="false"
+      Responsive="true">
+
+    <GridColumn TItem="User" HeaderText="Id" PropertyName="Id" HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+        @context.Id
+    </GridColumn>
+    <GridColumn TItem="User" HeaderText="FullName" PropertyName="FullName" SortString="FullName">
+        @context.FullName
+    </GridColumn>
+    <GridColumn TItem="User" HeaderText="Email" PropertyName="Email">
+        @context.Email
+    </GridColumn>
+    <GridColumn TItem="User" HeaderText="IsAdmin" PropertyName="IsAdmin">
+        @context.IsAdmin
+    </GridColumn>
+    <GridColumn TItem="User" HeaderText="RegisterDate" PropertyName="RegisterDate">
+        @context.RegisterDate
+    </GridColumn>
+    <GridColumn TItem="User" HeaderText="Actions">
+        <a href="@($"/Users/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
+        <a href="@($"/Users/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
+        <a href="@($"/Users/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
+    </GridColumn>
+
+
+</Grid>
+
+
+@code {
+
+    
+
+    private async Task<GridDataProviderResult<User>> UsersDataProvider(GridDataProviderRequest<User> request)
+    {
+        var Users = await GetUsersUseCase.ExecuteAsync();
+        return await Task.FromResult(new GridDataProviderResult<User> { Data = Users, TotalCount = Users.Count() });
+    }
+
+}

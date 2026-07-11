@@ -1,0 +1,14 @@
+﻿@page "/logout"
+@inject IJSRuntime JS
+@inject NavigationManager NavigationManager
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await JS.InvokeVoidAsync("logout");
+
+    }
+
+    
+
+}

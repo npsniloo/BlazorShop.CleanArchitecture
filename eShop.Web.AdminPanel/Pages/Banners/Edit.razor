@@ -1,0 +1,133 @@
+﻿@page "/banners/edit"
+@inject NavigationManager NavigationManager
+@inject IGetBannerByIdUseCase GetBannerByIdUseCase
+@inject IUpdateBannerUseCase UpdateBannerUseCase;
+@inject IFileHelperService FileService
+@inject IOptions<ImagesSettings> Options
+@inject PreloadService PreloadService
+@rendermode InteractiveServer
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Banner</h2>
+<hr />
+@if (Banner is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Banner" OnValidSubmit="UpdateBanner" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert" />
+                <input type="hidden" name="Banner.Id" value="@Banner.Id" />
+                <input type="hidden" name="Banner.ImageName" value="@Banner.ImageName" />
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title:</label>
+                    <InputTextArea id="title" rows="4" @bind-Value="Banner.Title" class="form-control" />
+                    <ValidationMessage For="() => Banner.Title" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="subtitle" class="form-label">SubTitle:</label>
+                    <InputTextArea id="subtitle" @bind-Value="Banner.SubTitle" class="form-control" />
+                    <ValidationMessage For="() => Banner.SubTitle" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="imagename" class="form-label">ImageName:</label>
+                    <InputFile OnChange="LoadFile" class="form-control" />
+                    <img src="/images/banners/@Banner.ImageName" style="max-width:150px" class="img-thumbnail" />
+                    <ValidationMessage For="() => Banner.ImageName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="priority" class="form-label">Priority:</label>
+                    <InputNumber id="priority" @bind-Value="Banner.Priority" class="form-control" />
+                    <ValidationMessage For="() => Banner.Priority" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="link" class="form-label">Link:</label>
+                    <InputText id="link" @bind-Value="Banner.Link" class="form-control" />
+                    <ValidationMessage For="() => Banner.Link" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="position" class="form-label">Position:</label>
+                    @*  <InputText id="position" @bind-Value="Banner.Position" class="form-control" /> *@
+                    <InputSelect id="position" @bind-Value="Banner.Position" class="form-control">
+                        <option>Select...</option>
+                        <option value="Slider" selected="@((Banner.Position == "Slider") ? "selected" : null)">Slider</option>
+                        <option value="Banner1" selected="@((Banner.Position == "Banner1") ? "selected" : null)">Banner1</option>
+                        <option value="Banner2" selected="@((Banner.Position == "Banner2") ? "selected" : null)">Banner2</option>
+                    </InputSelect>
+                    <ValidationMessage For="() => Banner.Position" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/banners">Back to List</a>
+</div>
+<Preload LoadingText="Loading..." />
+
+@code {
+
+
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Banner? Banner { get; set; }
+
+    private IBrowserFile UploadedFile { get; set; }
+
+    private void LoadFile(InputFileChangeEventArgs e)
+    {
+        UploadedFile = e.File;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        Banner ??= await GetBannerByIdUseCase.ExecuteAsync(Id);
+        if (Banner is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateBanner()
+    {
+        //------------Loading--------------------
+        PreloadService.Show(SpinnerColor.Light, "Saving Banner... Please Wait...");
+        try
+        {
+            if (Banner.ImageName != null)
+                FileService.DeleteImage(Options.Value.BannersPath, Banner.ImageName);
+
+            if (UploadedFile != null)
+            {
+                var uniqueFileName = FileService.GetUniqueFileName(UploadedFile);
+                Banner.ImageName = uniqueFileName;
+                using var stream = UploadedFile.OpenReadStream();
+                await FileService.UploadImageAsync(stream, Options.Value.BannersPath, uniqueFileName);
+            }
+            await UpdateBannerUseCase.ExecuteAsync(new UpdateBannerCommand(Banner!));
+            NavigationManager.NavigateTo("/banners");
+
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+
+    }
+
+}

@@ -1,0 +1,46 @@
+﻿@inject IShowSliderUseCase ShowSliderUseCase
+<section class="mb-63">
+    <Carousel Autoplay="CarouselAutoPlay.StartOnPageLoad" ShowIndicators="true">
+        @{
+            bool isActive = true;
+        }
+        @foreach (var item in Sliders)
+        {
+            <CarouselItem Active="@isActive" Interval="10000">
+                <div class="single_slider d-flex align-items-center" style="background-image:url('/images/banners/@item.ImageName');;height:100vh" >
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-7">
+                                <div class="slider_text">
+                                    @* <span>Lookbook</span> *@
+                                    <h1>@((MarkupString)(item.Title?.Replace("\n", "<br/>")))</h1>
+                                    <p>@((MarkupString)(item.SubTitle?.Replace("\n", "<br/>")))</p>
+                                    @if (!string.IsNullOrEmpty(item.Link))
+                                    {
+                                        <a class="btn btn-primary" href="@item.Link">Explore Now</a>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </CarouselItem>
+            //----------
+             isActive=false;
+            
+        }
+    </Carousel>
+</section>
+
+@code {
+
+    public List<Banner> Sliders { get; set; } = new();
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        Sliders = await ShowSliderUseCase.ExecuteAsync();
+    }
+
+
+}

@@ -1,0 +1,33 @@
+﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
+@using eShop.Web.AdminPanel.Shared
+@inject IJSRuntime JS
+
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+
+        <div class="top-row px-4">
+            <div class="header_account">
+                <ul class="d-flex">
+                    <li class="account_link">
+                        <UserMenuComponent />
+                    </li>
+                </ul>
+            </div>
+            </div>
+            <article class="content px-4">
+                @Body
+            </article>
+    </main>
+</div>
+@code {
+    private async Task RedirectToLogout()
+    {
+        await JS.InvokeVoidAsync("logout");
+    }
+}

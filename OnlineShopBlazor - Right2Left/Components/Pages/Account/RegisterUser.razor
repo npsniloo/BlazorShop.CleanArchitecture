@@ -1,0 +1,79 @@
+﻿@page "/register"
+@inject NavigationManager NavigationManager
+@inject IValidator<RegisterUserDto> Validator
+@inject IRegisterUserHandler registerUserHandler
+@rendermode InteractiveServer
+
+<PageTitle>Register</PageTitle>
+
+
+<hr />
+<div class="row" style="margin-top:150px">
+    <div class="col-md-4 mx-auto border">
+        <EditForm method="post" Model="User" OnValidSubmit="HandleValidSubmit" FormName="create" Enhance>
+            <FluentValidationValidator Validator="Validator" />
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger" role=alert>
+                    @errorMessage
+                </div>
+            }
+            <div class="mb-3">
+                <label for="email" class="form-label">ایمیل:</label>
+                <InputText id="email" @bind-Value="User.Email" class="form-control" />
+                <ValidationMessage For="() => User.Email" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">پسورد:</label>
+                <input id="password" type="password" @bind="User.Password" class="form-control" />
+                <ValidationMessage For="() => User.Password" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="fullname" class="form-label">نام کامل:</label>
+                <InputText id="fullname" @bind-Value="User.FullName" class="form-control" />
+                <ValidationMessage For="() => User.FullName" class="text-danger" />
+            </div>
+            <button type="submit" class="btn btn-primary">ثبت نام</button>
+        </EditForm>
+        <br />
+        <div>
+            <a href="/login">قبلا ثبت نام کرده اید؟ ورود </a>
+        </div>
+    </div>
+</div>
+
+<Preload />
+<Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.BottomRight" />
+
+
+@code {
+
+
+
+    [SupplyParameterFromForm]
+    private RegisterUserDto User { get; set; } = new();
+    [Inject] protected PreloadService PreloadService { get; set; } = default!;
+    [Inject] protected ToastService ToastService { get; set; } = default!;
+    private string? errorMessage = null;
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            //------------Loading--------------------
+            PreloadService.Show(SpinnerColor.Light, "در حال ذخیره اطلاعات... لطفا صبر کنید...");
+            await Task.Delay(1500);
+            //------------
+
+            var registerCommand = new RegisterUserCommand(User.Email, User.Password, User.FullName, false);
+            await registerUserHandler.ExecuteAsync(registerCommand);
+            User = new();
+            NavigationManager.NavigateTo("/login");
+        }
+        catch (Exception ex)
+        {
+            PreloadService.Hide();
+            Console.Error.WriteLine($"Registration failed:{ex.Message}");
+            errorMessage = "خطایی رخ داده است. لطفا کمی بعد دوباره امتحان کنید";
+        }
+    }
+}

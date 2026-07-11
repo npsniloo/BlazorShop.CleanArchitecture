@@ -1,0 +1,37 @@
+﻿@using BlazorBootstrap
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inject NavigationManager NavigationManager
+
+
+
+<a class="btn btn-primary" disabled="@(loading ? "disabled" : null)" @onclick="AddToCartAsync" data-tippy="Add To Cart" data-tippy-inertia="true" data-tippy-delay="50" data-tippy-arrow="true" data-tippy-placement="top">
+    @if (loading)
+    {
+        <Spinner Class="me-3" Type="SpinnerType.Dots" Color="SpinnerColor.Light" />
+    }
+    else
+    {
+        <span>افزودن به سبد ‌خرید</span>
+    }
+</a>
+
+
+@code {
+    [Parameter]
+    public int ProductId { get; set; }
+    private bool loading = false;
+    private async Task AddToCartAsync()
+    {
+        loading = true;
+        await Task.Delay(1500);
+        var userId = 0;
+        if (userId == 0)
+        {
+            loading = false;
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+
+    }
+}

@@ -1,0 +1,39 @@
+/* ==========================================================================
+   Custom Font Definitions - Yekan Font (Single Weight)
+   ========================================================================== */
+
+@font-face {
+    font-family: 'wYekan';
+    src: url('../fonts/wYekan.woff2') format('woff2'), /* Path relative to your CSS file */
+    url('../fonts/wYekan.woff') format('woff');
+    font-weight: 400; /* Or 'normal'. This is the weight your single file provides. */
+    font-style: normal;
+    font-display: swap; /* Crucial for performance */
+}
+
+/* ==========================================================================
+   Apply the font and other base styles to the website
+   ========================================================================== */
+
+body {
+    background-color: #F9F9F9;
+    /* Apply the custom font. Use fallbacks for safety. */
+    font-family: 'wYekan', Arial, sans-serif;
+    /* User selection styles */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* For elements where you might have previously tried to apply bold/medium: */
+/* These will now just use the single 'wYekan' font, possibly with browser's faux bold/medium */
+h1, h2, h3, h4, h5, h6,
+.product-title, .price,
+.product-description, p {
+    font-family: 'wYekan', Arial, sans-serif;
+    /* You can try setting font-weight here, but it won't load a different file. */
+    /* The browser might try to simulate it. */
+    /* font-weight: 700; */ /* Uncomment if you want to try faux bold */
+    /* font-weight: 500; */ /* Uncomment if you want to try faux medium */
+}

@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\eShop.Domain\eShop.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Interfaces\UseCases\Admin Portal\Banners\" />
+    <Folder Include="Interfaces\UseCases\Admin Portal\Comments\" />
+    <Folder Include="Interfaces\UseCases\Admin Portal\Coupons\" />
+    <Folder Include="Interfaces\UseCases\Common\" />
+    <Folder Include="Interfaces\UseCases\Customer Portal\" />
+    <Folder Include="UseCases\Admin Portal\Products\DeleteProduct\" />
+    <Folder Include="UseCases\Admin Portal\Products\GetProducts\" />
+    <Folder Include="UseCases\Admin Portal\Products\GetProductById\" />
+    <Folder Include="UseCases\Admin Portal\Products\UpdateProduct\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.16" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.16" />
+  </ItemGroup>
+
+</Project>

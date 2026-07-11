@@ -1,0 +1,218 @@
+﻿@page "/products/edit"
+@inject IUpdateProductUseCase UpdateProductUseCase
+@inject IGetProductByIdUseCase GetProductByIdUseCase
+@inject IGetGalleryByIdUseCase GetGalleryByIdUseCase
+@inject IGetGalleriesByProdIdUseCase GetGalleriesByProdIdUseCase
+@inject IDeleteGalleryUseCase DeleteGalleryUseCase
+@inject IFileHelperService FileService
+@inject IOptions<ImagesSettings> Options
+
+@inject PreloadService PreloadService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Product</h2>
+<hr />
+@if (Product is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Product" OnValidSubmit="UpdateProduct" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert" />
+                <input type="hidden" name="Product.Id" value="@Product.Id" />
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title:</label>
+                    <InputText id="title" @bind-Value="Product.Title" class="form-control" />
+                    <ValidationMessage For="() => Product.Title" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description:</label>
+                    <InputText id="description" @bind-Value="Product.Description" class="form-control" />
+                    <ValidationMessage For="() => Product.Description" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="fulldesc" class="form-label">FullDesc:</label>
+                    <InputTextArea id="fulldesc" @bind-Value="Product.FullDesc" class="form-control" />
+                    <ValidationMessage For="() => Product.FullDesc" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price:</label>
+                    <InputNumber id="price" @bind-Value="Product.Price" class="form-control" />
+                    <ValidationMessage For="() => Product.Price" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="discount" class="form-label">Discount:</label>
+                    <InputNumber id="discount" @bind-Value="Product.Discount" class="form-control" />
+                    <ValidationMessage For="() => Product.Discount" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="imagename" class="form-label">Main ImageName:</label>
+                    @*  <InputText id="imagename" @bind-Value="Product.ImageName" class="form-control" />  *@
+                    <InputFile id="imagename" OnChange="LoadMainImageFile" class="form-control" />
+                    <br />
+                    <img src="/images/products/@Product.ImageName" />
+                    <ValidationMessage For="() => Product.ImageName" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="Galleryimagename" class="form-label">Gallery ImageName:</label>
+                    @*  <InputText id="imagename" @bind-Value="Product.ImageName" class="form-control" />  *@
+                    <InputFile id="Galleryimagename" OnChange="LoadGalleryFiles" class="form-control" multiple />
+                    <ValidationMessage For="() => Product.ImageName" class="text-danger" />
+                </div>
+                <div class="col-md-8">
+                    <h3>Product Gallery</h3>
+                    <div class="row">
+                        @foreach (var gallery in Galleries)
+                        {
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <img src="/images/products/@gallery.ImageName" class="card-img-top" alt="Gallery Image" />
+                                    <div class="card-body">
+                                        <a class="btn btn-danger btn-sm" @onclick="() => DeleteGalleryImage(gallery.Id)">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="qty" class="form-label">Qty:</label>
+                    <InputNumber id="qty" @bind-Value="Product.Qty" class="form-control" />
+                    <ValidationMessage For="() => Product.Qty" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="tags" class="form-label">Tags:</label>
+                    <InputText id="tags" @bind-Value="Product.Tags" class="form-control" />
+                    <ValidationMessage For="() => Product.Tags" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="videourl" class="form-label">VideoUrl:</label>
+                    <InputText id="videourl" @bind-Value="Product.VideoUrl" class="form-control" />
+                    <ValidationMessage For="() => Product.VideoUrl" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/products">Back to List</a>
+</div>
+<Preload LoadingText="Loading..." />
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Product? Product { get; set; }
+
+    private List<ProductGallery> Galleries { get; set; } = new();
+
+
+    private IBrowserFile UploadedFile { get; set; }
+
+    private List<IBrowserFile> GalleryFiles { get; set; } = new();
+
+    private void LoadMainImageFile(InputFileChangeEventArgs e) => UploadedFile = e.File;
+
+    private void LoadGalleryFiles(InputFileChangeEventArgs e) => GalleryFiles.AddRange(e.GetMultipleFiles());
+
+    private async Task DeleteGalleryImage(int galleryId)
+    {
+
+        var gallery = await GetGalleryByIdUseCase.ExecuteAsync(galleryId);
+
+        if (gallery != null)
+        {
+            FileService.DeleteImage(Options.Value.ProductsPath, gallery.ImageName);
+
+            await DeleteGalleryUseCase.ExecuteAsync(gallery.Id);
+
+            Galleries = (await GetGalleriesByProdIdUseCase.ExecuteAsync(Id)).ToList();
+        }
+    }
+    protected async override Task OnParametersSetAsync()
+    {
+        Product ??= await GetProductByIdUseCase.ExecuteAsync(Id);
+
+        if (Product is null)
+            NavigationManager.NavigateTo("notfound");
+
+        Galleries = (await GetGalleriesByProdIdUseCase.ExecuteAsync(Product!.Id)).ToList();
+
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateProduct()
+    {
+        //------------Loading----------------------------------------
+        PreloadService.Show(SpinnerColor.Light, "Saving Product... Please Wait...");
+        //------------------------------------------------------------
+
+
+        if (UploadedFile != null)
+        {
+            if (Product!.ImageName != null)
+                FileService.DeleteImage(Options.Value.ProductsPath, Product!.ImageName);
+
+            var fileName = FileService.GetUniqueFileName(UploadedFile);
+            
+            Product!.ImageName = fileName;
+            
+            await SaveFileAsync(UploadedFile, fileName);
+
+        }
+        try
+        {
+            var newImages = new List<string>();
+
+            if (GalleryFiles != null)
+            {
+                foreach (var file in GalleryFiles)
+                {
+                    string fileName = FileService.GetUniqueFileName(file);
+
+                    // save in gallery
+                    newImages.Add(fileName);
+
+                    await SaveFileAsync(file, fileName);
+                }
+            }
+            var command = new UpdateProductCommand(Product!, newImages);
+
+            await UpdateProductUseCase.ExecuteAsync(command);
+        }
+        catch
+        {
+            throw;
+        }
+
+        PreloadService.Hide();
+        NavigationManager.NavigateTo("/products");
+    }
+
+
+    private async Task SaveFileAsync(IBrowserFile file, string fileName)
+    {
+        const long maxFileSize = 5 * 1024 * 1024;
+
+        using var stream = UploadedFile.OpenReadStream(maxFileSize);
+
+        await FileService.UploadImageAsync(stream, Options.Value.ProductsPath, fileName);
+    }
+
+
+}

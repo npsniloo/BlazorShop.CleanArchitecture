@@ -1,0 +1,92 @@
+﻿@page "/user/orders"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject IGetCustomerOrdersUseCase GetGetCustomerOrdersUseCase
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+
+<PageTitle>سفارشات</PageTitle>
+
+<div class="container">
+
+    <h2>سفارش ها</h2>
+    <hr />
+
+    <Grid TItem="Order"
+          Class="table table-hover table-bordered table-striped"
+          DataProvider="OrdersDataProvider"
+          AllowFiltering="false"
+          AllowPaging="false"
+          AllowSorting="false"
+          Responsive="true">
+
+        <GridColumn TItem="Order" HeaderText="شناسه" PropertyName="Id" HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+            @context.Id
+        </GridColumn>
+        <GridColumn TItem="Order" HeaderText="نام" PropertyName="FirstName" SortString="FirstName">
+            @context.FirstName
+        </GridColumn>
+        <GridColumn TItem="Order" HeaderText="نام خانوادگی" PropertyName="LastName">
+            @context.LastName
+        </GridColumn>
+        <GridColumn TItem="Order" HeaderText="مجموع" PropertyName="Total">
+            @GetPriceDisplay(context.Total)
+        </GridColumn>
+        <GridColumn TItem="Order" HeaderText="تاریخ" PropertyName="CreateDate">
+            @GetDateDisplay(context.CreateDate)
+        </GridColumn>
+        <GridColumn TItem="Order" HeaderText="ساعت" PropertyName="CreateDate">
+            @GetTimeDisplay(context.CreateDate)
+        </GridColumn>
+        <GridColumn TItem="Order" HeaderText="شناسه تراکنش" PropertyName="TransactionId">
+            @context.TransactionId
+        </GridColumn>
+        <GridColumn TItem="Order" HeaderText="وضعیت" PropertyName="TransactionStatus">
+            @context.TransactionStatus
+        </GridColumn>
+        <GridColumn TItem="Order" HeaderText="Actions">
+            <a href="@($"/user/orders/details?id={context.Id}")" class="text-info">جزئیات</a>
+        </GridColumn>
+
+
+    </Grid>
+
+</div>
+@code {
+
+    private string GetDateDisplay(DateTime? date) => date.HasValue ? date.Value.ToString("yyyy/MM/dd") : "";
+
+    private string GetTimeDisplay(DateTime? date) => date.HasValue ? date.Value.ToString("hh:mm") : "";
+
+    private string GetPriceDisplay(decimal? price) => price?.ToString("N0");
+
+
+
+    private async Task<int> GetUserIdAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(userIdClaim, out int userId) == true)
+            {
+                return userId;
+            }
+        }
+        return 0;
+    }
+
+    private async Task<GridDataProviderResult<Order>> OrdersDataProvider(GridDataProviderRequest<Order> request)
+    {
+        var userId = await GetUserIdAsync();
+        if (userId < 0)
+            NavigationManager.NavigateTo("notfound");
+        var orders = await GetGetCustomerOrdersUseCase.ExecuteAsync(userId);
+        return await Task.FromResult(new GridDataProviderResult<Order> { Data = orders, TotalCount = orders.Count() });
+    }
+
+}
