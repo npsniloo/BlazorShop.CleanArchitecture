@@ -1,0 +1,45 @@
+﻿@page "/coupons/details"
+@inject IGetCouponByIdUseCase GetCouponByIdUseCase
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Coupon</h2>
+    <hr />
+    @if (coupon is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Code</dt>
+            <dd class="col-sm-10">@coupon.Code</dd>
+            <dt class="col-sm-2">Discount</dt>
+            <dd class="col-sm-10">@coupon.Discount</dd>
+        </dl>
+        <div>
+            <a href="@($"/coupons/edit?id={coupon.Id}")">Edit</a> |
+            <a href="@($"/coupons")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Coupon? coupon;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        coupon = await GetCouponByIdUseCase.ExecuteAsync(Id);
+
+        if (coupon is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

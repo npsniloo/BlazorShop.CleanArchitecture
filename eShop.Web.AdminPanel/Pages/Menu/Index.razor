@@ -1,0 +1,44 @@
+﻿@page "/menus"
+@inject IGetMenusUseCase GetMenusUseCase
+
+<Grid TItem="Menu"
+      Class="table table-hover table-bordered table-striped"
+      DataProvider="MenusDataProvider"
+      AllowFiltering="false"
+      AllowPaging="false"
+      AllowSorting="false"
+      Responsive="true">
+
+    <GridColumn TItem="Menu" HeaderText="Id" PropertyName="Id" HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+        @context.Id
+    </GridColumn>
+    <GridColumn TItem="Menu" HeaderText="Title" PropertyName="Title" SortString="Title">
+        @context.Title
+    </GridColumn>
+    <GridColumn TItem="Menu" HeaderText="Type" PropertyName="Type">
+        @context.Type
+    </GridColumn>
+    <GridColumn TItem="Menu" HeaderText="Link" PropertyName="Link">
+        @context.Link
+    </GridColumn>
+   
+    <GridColumn TItem="Menu" HeaderText="Actions">
+        <a href="@($"/Menus/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
+        <a href="@($"/Menus/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
+        <a href="@($"/Menus/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
+    </GridColumn>
+
+
+</Grid>
+
+
+@code {
+    
+
+   
+    private async Task<GridDataProviderResult<Menu>> MenusDataProvider(GridDataProviderRequest<Menu> request)
+    {
+        var Menus = await GetMenusUseCase.ExecuteAsync();
+        return await Task.FromResult(new GridDataProviderResult<Menu> { Data = Menus, TotalCount = Menus.Count() });
+    }
+}

@@ -1,0 +1,16 @@
+﻿
+@inject NavigationManager NavigationManager
+
+<form class="border-bottom" @onsubmit="HandleSearch" @onsubmit:preventDefault>
+    <input class="border-0" placeholder="Search products..." type="text" @bind="SearchText">
+    <button type="submit"><span class="icon-magnifier icons"></span></button>
+</form>
+
+@code {
+    private string SearchText{ get; set; }
+    private void HandleSearch()
+    {
+        NavigationManager.NavigateTo($"/shop?searchText={SearchText}");
+    }
+
+}

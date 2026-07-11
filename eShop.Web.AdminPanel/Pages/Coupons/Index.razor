@@ -1,0 +1,46 @@
+﻿@page "/coupons"
+@inject IGetCouponsUseCase GetCouponsUseCase
+
+<PageTitle>Coupons</PageTitle>
+
+<h1>Coupons</h1>
+
+<p>
+    <a class="btn btn-info  p-1" href="coupons/create">Create New</a>
+</p>
+<Grid TItem="Coupon"
+      Class="table table-hover table-bordered table-striped"
+      DataProvider="CouponsDataProvider"
+      AllowFiltering="false"
+      AllowPaging="false"
+      AllowSorting="false"
+      Responsive="true">
+
+    <GridColumn TItem="Coupon" HeaderText="Id" PropertyName="Id" HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+        @context.Id
+    </GridColumn>
+    <GridColumn TItem="Coupon" HeaderText="Code" PropertyName="Title" SortString="Code">
+        @context.Code
+    </GridColumn>
+    <GridColumn TItem="Coupon" HeaderText="SubTitle" PropertyName="Discount">
+        @context.Discount
+    </GridColumn>
+    <GridColumn TItem="Coupon" HeaderText="Actions">
+        <a href="@($"/Coupons/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
+        <a href="@($"/Coupons/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
+        <a href="@($"/Coupons/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
+    </GridColumn>
+
+
+</Grid>
+
+
+@code {
+   
+    private async Task<GridDataProviderResult<Coupon>> CouponsDataProvider(GridDataProviderRequest<Coupon> request)
+    {
+        var coupons = await GetCouponsUseCase.ExecuteAsync();
+        return await Task.FromResult(new GridDataProviderResult<Coupon> { Data = coupons, TotalCount = coupons.Count() });
+    }
+
+}

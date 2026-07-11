@@ -1,0 +1,404 @@
+﻿@page "/checkout"
+@using Blazilla
+@using BlazorBootstrap
+@using FluentValidation
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.Extensions.Configuration
+@using System.Security.Claims
+@inject IValidator<Order> Validator
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject IConfiguration _configuration
+@inject IGetCouponDiscountByCodeUseCase GetCouponDicountByCode
+@inject IGetShippingPriceUseCase GetShippingPrice
+@inject IGetCartItemsUseCase GetCartItems
+@inject ISaveOrderUseCase SaveOrder
+@inject IAddOrderDetailUseCase AddOrderDetailUseCase
+@inject IReduceProductCountUseCase ReduceProductCountUseCase
+@inject IClearCartItemsUseCase ClearCartItemsUseCase
+
+
+@attribute [Authorize]
+
+<div class="checkout_section" id="accordion" style="margin-top:200px">
+    <div class="container">
+
+        <div class="checkout_form">
+            <div class="row">
+                <div class="col-lg-7 col-md-6">
+                    <EditForm method="post" Model="Order" OnValidSubmit="SubmitOrder">
+                        <FluentValidator Validator="Validator" />
+
+                        <h3>آدرس</h3>
+                        <div class="checkout_form_input">
+                            @* <label>country <span>*</span></label> *@
+                            @* <InputSelect @bind-Value="Order.Country" class="select_option" name="کشور" id="country">
+                                <option>Select your country ...</option>
+                                <option value="United Kingdom (UK)">United Kingdom (UK)</option>
+                                <option value="Algeria">Algeria</option>
+                                <option value="Afghanistan">Afghanistan</option>
+                                <option value="Ghana">Ghana</option>
+                                <option value="Albania">Albania</option>
+                                <option value="Bahrain">Bahrain</option>
+                                <option value="Colombia">Colombia</option>
+                                <option value="Dominican Republic">Dominican Republic</option>
+                            </InputSelect> *@
+
+                            @* <ValidationMessage For="() => Order.Country" class="text-danger" /> *@
+                        </div>
+                        <div class="checkout_form_input">
+                            <label>نام <span>*</span></label>
+                            <InputText id="firstName" @bind-Value="Order.FirstName" class="form-control" />
+                            <ValidationMessage For="() => Order.FirstName" class="text-danger" />
+                        </div>
+                        <div class="checkout_form_input">
+                            <label>نام خانوادگی  <span>*</span></label>
+                            <InputText id="lastName" @bind-Value="Order.LastName" class="form-control" />
+                            <ValidationMessage For="() => Order.LastName" class="text-danger" />
+                        </div>
+                        <div class="checkout_form_input">
+                            <label>نام شرکت</label>
+                            <InputText id="companyName" @bind-Value="Order.CompanyName" class="form-control" />
+                            <ValidationMessage For="() => Order.CompanyName" class="text-danger" />
+                        </div>
+                        <div class="checkout_form_input">
+                            <label>آدرس  <span>*</span></label>
+                            <InputText id="Address" @bind-Value="Order.Address" class="form-control" />
+                            <ValidationMessage For="() => Order.Address" class="text-danger" />
+                        </div>
+                        <div class="checkout_form_input">
+                            <label>شهر <span>*</span></label>
+                            <InputText id="city" @bind-Value="Order.City" class="form-control" />
+                            <ValidationMessage For="() => Order.City" class="text-danger" />
+                        </div>
+                        <div class="checkout_form_input">
+                            <label> ایمیل   <span>*</span></label>
+                            <InputText id="email" @bind-Value="Order.Email" class="form-control" />
+                            <ValidationMessage For="() => Order.Email" class="text-danger" />
+                        </div>
+                        <div class="checkout_form_input">
+                            <label> شماره موبایل <span>*</span></label>
+                            <InputText id="phone" @bind-Value="Order.Phone" class="form-control" />
+                            <ValidationMessage For="() => Order.Phone" class="text-danger" />
+                        </div>
+
+                        <div class="checkout_form_input">
+                            <label>توضیحات</label>
+                            <InputText id="comment" @bind-Value="Order.Comment" class="form-control" />
+                            <ValidationMessage For="() => Order.Comment" class="text-danger" />
+                        </div>
+                        <div class="place_order_btn">
+                            <button class="btn btn-primary d-block w-100" type="submit" disabled="@(loading2 ? "disabled" : null)">
+                                @if (loading2)
+                                {
+                                    <Spinner Class="me-3" Type="SpinnerType.Dots" Color="SpinnerColor.Light" />
+
+                                }
+                                else
+                                {
+                                    <span>
+                                        پرداخت
+                                    </span>
+                                }
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+                <div class="col-lg-5 col-md-6">
+                    <div class="order_table_right">
+                        <h3>سفارش شما</h3>
+                        <div class="order_table table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>کالا</th>
+                                        <th class="text-right">مجموع</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Products)
+                                    {
+                                        <tr>
+                                            <td> @item.ProductTitle   </td>
+                                            <td class="text-right"> @item.RowSum.ToString("N0")  تومان</td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td>مجموع سبد خرید  </td>
+                                        <td class="text-right">@Products.Sum(x => x.RowSum).ToString("N0") تومان</td>
+                                    </tr>
+                                    @if (Order.Shipping != null)
+                                    {
+                                        <tr>
+                                            <td>هزینه ارسال  </td>
+                                            <td class="text-right">@Order.Shipping.GetValueOrDefault(0).ToString("N0") تومان</td>
+                                        </tr>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Order.CouponCode))
+                                    {
+                                        <tr>
+                                            <td>
+                                                تخفیف - &nbsp; @Order.CouponCode &nbsp;&nbsp;
+                                                <a @onclick="RemoveCoupon">
+                                                    <i class="ion-android-close"></i>
+                                                </a>
+                                            </td>
+                                            <td class="text-right">@Order.CouponDiscount.GetValueOrDefault(0).ToString("N0") تومان</td>
+                                        </tr>
+                                    }
+                                    <tr class="order_total">
+                                        <th>مجموع مبلغ سفارش</th>
+                                        @{
+                                            var orderTotal = (Products.Sum(x => x.RowSum) + Order.Shipping.GetValueOrDefault(0)) - Order.CouponDiscount.GetValueOrDefault(0);
+                                        }
+                                        <td class="text-right">
+                                            @orderTotal.ToString("N0") تومان
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+
+                        </div>
+
+
+                    </div>
+                    <div class="col-12 pe-2 ps-3">
+                        @if (!string.IsNullOrEmpty(Order.CouponCode))
+                        {
+                            <div class="alert  alert-success" role="alert">
+                                کد تخفیف با موفقیت اعمال شد
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="checkout_info coupon_info row">
+                                <div class="col-8">
+                                    <input placeholder="کد تخفیف" @bind-value="CouponCode" type="text" class="form-control" />
+                                </div>
+                                <div class="col-4">
+                                    <button class="btn btn-primary btn-block w-100" type="submit" disabled="@(loading1 ? "disabled" : null)" @onclick="async () => await ApplyCoupon()">
+                                        @if (loading1)
+                                        {
+                                            <Spinner Class="me-3" Type="SpinnerType.Dots" Color="SpinnerColor.Light" />
+
+                                        }
+                                        else
+                                        {
+                                            <span>
+                                                افزودن
+                                            </span>
+                                        }
+                                    </button>
+                                </div>
+                                <br />
+                                <br />
+                                @if (!string.IsNullOrEmpty(errorMessage))
+                                {
+                                    <div class="alert alert-danger" role=alert>
+                                        @errorMessage
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+
+    private Order Order = new();
+    private string CouponCode = "";
+    private bool loading1 = false;
+    private bool loading2 = false;
+    private string? errorMessage = null;
+    public List<CartItemDto> Products { get; set; } = new();
+    protected async override Task OnInitializedAsync()
+    {
+        var shippingPrice = await GetShippingPrice.Execute();
+        Order.Shipping = shippingPrice;
+        await LoadCartAsync();
+    }
+    private async Task LoadCartAsync()
+    {
+        var userId = await GetUserIdAsync();
+        if (userId == 0)
+            return;
+        var cartItems =
+        Products = await GetCartItems.ExecuteAsync(userId);
+
+    }
+    private async Task<int> GetUserIdAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(userIdClaim, out int userId) == true)
+            {
+                return userId;
+            }
+        }
+        return 0;
+    }
+    private async Task ApplyCoupon()
+    {
+        loading1 = true;
+        if (string.IsNullOrEmpty(CouponCode))
+        {
+            loading1 = false;
+            errorMessage = "کد تحفیف خالیست.";
+            return;
+        }
+        var coupon = await GetCouponDiscountAsync(CouponCode);
+        if (coupon == null)
+        {
+            loading1 = false;
+            errorMessage = "کد تخفیف وجود ندارد.";
+            return;
+        }
+        errorMessage = "";
+        Order.CouponDiscount = coupon.Discount;
+        Order.CouponCode = coupon.Code;
+        loading1 = false;
+        return;
+
+    }
+    private async Task<CouponDiscountDto?> GetCouponDiscountAsync(string code)
+    {
+        return await GetCouponDicountByCode.ExecuteAsync(CouponCode);
+    }
+
+    private void RemoveCoupon()
+    {
+        Order.CouponCode = null;
+        Order.CouponDiscount = null;
+    }
+    private async Task SubmitOrder()
+    {
+        loading2 = true;
+        errorMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            var userId = await GetUserIdAsync();
+            if (userId == 0)
+            {
+                loading2 = false;
+                errorMessage = "User not authenticated.";
+                StateHasChanged();
+                return;
+            }
+
+            if (Products == null || !Products.Any())
+            {
+                loading2 = false;
+                errorMessage = "Cart is empty.";
+                StateHasChanged();
+                return;
+            }
+
+
+            if (!string.IsNullOrEmpty(CouponCode))
+            {
+                var coupon = await GetCouponDiscountAsync(CouponCode);
+                if (coupon == null)
+                {
+                    loading2 = false;
+                    errorMessage = "Coupon not exist.";
+                    StateHasChanged();
+                    return;
+                }
+            }
+
+            //----------------------- Create Order ----------------------------------------------
+            Order.CreateDate = DateTime.Now;
+            Order.SubTotal = Products.Sum(p => p.RowSum);
+            Order.Total = Order.SubTotal + Order.Shipping.GetValueOrDefault(0);
+            Order.Country = "IRAN";
+            Order.UserId = userId;
+
+            if (Order.CouponDiscount != null)
+            {
+                Order.Total -= Order.CouponDiscount.Value;
+            }
+
+            // Use async methods - CRITICAL for Blazor Server
+            await SaveOrder.ExecuteAsync(Order);
+
+            //---------------------------- Save Products in Orderdetails-------------------------
+            List<OrderDetail> orderDetails = new List<OrderDetail>();
+            foreach (var item in Products)
+            {
+                var orderDetail = new OrderDetail
+                {
+                    OrderId = Order.Id,
+                    ProductId = item.ProductId,
+                    ProductPrice = item.ProductPrice.Value,
+                    ProductTitle = item.ProductTitle ?? "",
+                    Count = item.Count
+                };
+                orderDetails.Add(orderDetail);
+            }
+
+            // Use async methods - CRITICAL for Blazor Server
+            await AddOrderDetailUseCase.ExecuteAsync(orderDetails);
+            loading2 = false;
+            StateHasChanged();
+
+            // Small delay to ensure UI updates before navigation
+            await Task.Delay(100);
+            var needPayment = bool.Parse(_configuration.GetValue<string>("NeedPayment"));
+            if (needPayment)
+            {
+                NavigationManager.NavigateTo($"/RedirectToPayPal?orderId={Order.Id}", forceLoad: true);
+            }
+            else
+            {
+
+                await ClearCartItemsUseCase.ExecuteAsync(userId);
+
+                Order.TransactionId = new Random().Next(1, 9999).ToString();
+                Order.TransactionStatus = "registered";
+                var reduceComand = new ReduceProductCountCommand()
+                {
+                    ProductCounts = Products.Select(p =>
+                     new ProductCountDto
+                     {
+                         ProductId = p.Id,
+                         ConsumedCount = p.Count
+
+                     }).ToList()
+                };
+                await ReduceProductCountUseCase.ExecuteAsync(reduceComand);
+                await ReduceProductCountUseCase.ExecuteAsync(reduceComand);
+                NavigationManager.NavigateTo("/");
+            }
+        }
+        //catch (Exception ex)
+        // {
+        //     loading2 = false;
+        //     errorMessage = $"Database error: {ex.Message}";
+        //     if (ex.InnerException != null)
+        //     {
+        //         errorMessage += $" - {ex.InnerException.Message}";
+        //     }
+        //     StateHasChanged();
+        // }
+        catch (Exception ex)
+        {
+            loading2 = false;
+            errorMessage = $"An error occurred: {ex.Message}";
+            StateHasChanged();
+        }
+    }
+}

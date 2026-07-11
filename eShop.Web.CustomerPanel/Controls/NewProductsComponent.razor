@@ -1,0 +1,34 @@
+﻿@inject INewProductsUseCase NewProductsUseCase
+<Carousel>
+    @if (NewProducts.Any())
+    {
+        var numberOfRows = Math.Ceiling((NewProducts.Count / 4.0));
+        bool active = true;
+        for (int i = 0; i < numberOfRows; i++)
+        {
+            var productsToDisplay = NewProducts.Skip(i * 4).Take(4);
+            <CarouselItem Active="active">
+                <div class="row">
+                    @foreach (var item in productsToDisplay)
+                    {
+                        <div class="col-6 col-md-3 single_product">
+                            <ProductBoxComponent Model="item" />
+                        </div>
+                    }
+                </div>
+            </CarouselItem>
+        }
+
+
+
+    }
+</Carousel>
+@code {
+    
+    public List<Product> NewProducts { get; set; } = new();
+    
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        NewProducts = await NewProductsUseCase.ExecuteAsync(8);
+    }
+}

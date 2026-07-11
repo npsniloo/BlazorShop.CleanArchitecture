@@ -1,0 +1,52 @@
+﻿@page "/comments"
+@inject IGetCommentsUseCase GetCommentsUseCase
+
+<PageTitle>Comments</PageTitle>
+
+<h1>Comments</h1>
+
+<Grid TItem="Comment"
+      Class="table table-hover table-bordered table-striped"
+      DataProvider="CommentsDataProvider"
+      AllowFiltering="false"
+      AllowPaging="false"
+      AllowSorting="false"
+      Responsive="true">
+
+    <GridColumn TItem="Comment" HeaderText="Id" PropertyName="Id" HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+        @context.Id
+    </GridColumn>
+    <GridColumn TItem="Comment" HeaderText="CommentText" PropertyName="CommentText" SortString="CommentText">
+        @context.CommentText
+    </GridColumn>
+    <GridColumn TItem="Comment" HeaderText="Email" PropertyName="Email">
+        @context.Email
+    </GridColumn>
+    <GridColumn TItem="Comment" HeaderText="ProductId" PropertyName="ProductId">
+        @context.ProductId
+    </GridColumn>
+    <GridColumn TItem="Comment" HeaderText="CreateDate" PropertyName="CreateDate">
+        @context.CreateDate
+    </GridColumn>
+    <GridColumn TItem="Comment" HeaderText="Actions">
+        <a href="@($"/Comments/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
+        <a href="@($"/Comments/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
+        <a href="@($"/Comments/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
+    </GridColumn>
+
+
+</Grid>
+
+
+@code {
+    
+
+   
+    private async Task<GridDataProviderResult<Comment>> CommentsDataProvider(GridDataProviderRequest<Comment> request)
+    {
+        var Comments = await GetCommentsUseCase.ExecuteAsync();
+        return await Task.FromResult(new GridDataProviderResult<Comment> { Data = Comments, TotalCount = Comments.Count() });
+    }
+
+}
+

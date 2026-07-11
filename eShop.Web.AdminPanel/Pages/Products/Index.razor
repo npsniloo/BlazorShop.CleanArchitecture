@@ -1,0 +1,49 @@
+﻿@page "/products"
+@inject IGetProductsUseCase GetProductsUseCase
+@inject IOptions<ImagesSettings> Options
+
+<PageTitle>Products</PageTitle>
+
+<h1>Products</h1>
+
+
+<p>
+    <a class="btn btn-info  p-1" href="products/create">Create New</a>
+</p>
+
+<GridColumn TItem="Product" HeaderText="Id" PropertyName="Id" HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+    @context.Id
+</GridColumn>
+<GridColumn TItem="Product" HeaderText="Title" PropertyName="Title" SortString="Title">
+    @context.Title
+</GridColumn>
+<GridTemplates ti>
+        
+</GridTemplates>
+<GridColumn TItem="Product" HeaderText="Price" PropertyName="Price">
+    @context.Price
+</GridColumn>
+<GridColumn TItem="Product" HeaderText="Discount" PropertyName="Discount">
+    @context.Discount
+</GridColumn>
+<GridColumn TItem="Product" HeaderText="Image" PropertyName="Image">
+    <img src="@Options.Value.ProductsPath+@context.ImageName" alt="@@context.Title" style="max-width:100px" />
+</GridColumn>
+   
+<GridColumn TItem="Product" HeaderText="Actions">
+    <a href="@($"/Products/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
+    <a href="@($"/Products/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
+    <a href="@($"/Products/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
+</GridColumn>
+
+
+
+@code {
+    private async Task<GridDataProviderResult<Product>> ProductsDataProvider(GridDataProviderRequest<Product> request)
+    {
+        var Products = await GetProductsUseCase.ExecuteAsync();
+        return await Task.FromResult(new GridDataProviderResult<Product> { Data = Products, TotalCount = Products.Count() });
+    }
+}
+
+

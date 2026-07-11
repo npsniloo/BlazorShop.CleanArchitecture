@@ -1,0 +1,81 @@
+﻿@page "/menus/edit"
+@inject IUpdateMenuUseCase UpdateMenuUseCase
+@inject IGetMenuByIdUseCase GetMenuByIdUseCase
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Menu</h2>
+<hr />
+@if (Menu is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Menu" OnValidSubmit="UpdateMenu" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <input type="hidden" name="Menu.Id" value="@Menu.Id" />
+                <div class="mb-3">
+                    <label for="menutitle" class="form-label">Title:</label>
+                    <InputText id="menutitle" @bind-Value="Menu.Title" class="form-control" />
+                    <ValidationMessage For="() => Menu.Title" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="link" class="form-label">Link:</label>
+                    <InputText id="link" @bind-Value="Menu.Link" class="form-control" />
+                    <ValidationMessage For="() => Menu.Link" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="type" class="form-label">Type:</label>
+                    <InputSelect id="type" @bind-Value="Menu.Type" class="form-control">
+                        <option value="Top" selected="@((Menu.Type == "Top") ? "selected" : null)">Top</option>
+                        <option value="Bottom" selected="@((Menu.Type == "Bottom") ? "selected" : null)">Bottom</option>
+                    </InputSelect>
+                    <ValidationMessage For="() => Menu.Type" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/menus">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Menu? Menu { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Menu = await GetMenuByIdUseCase.ExecuteAsync(Id);
+
+        if (Menu is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    private async Task UpdateMenu()
+    {
+        try
+        {
+            await UpdateMenuUseCase.ExecuteAsync(new UpdateMenuCommand(Menu!));
+        }
+        catch
+        {
+            throw;
+        }
+
+        NavigationManager.NavigateTo("/menus");
+    }
+}

@@ -1,0 +1,102 @@
+﻿@page "/orders/details"
+@inject IGetOrderByIdUseCase GetOrderByIdUseCase
+@inject IGetOrderDetailsUseCase GetGetOrderDetailsUseCase
+@inject NavigationManager NavigationManager
+
+<PageTitle>Order Details</PageTitle>
+
+<h1>Order Details</h1>
+
+<div>
+    <hr />
+    @if (order is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-2">UserId</dt>
+            <dd class="col-sm-10">@order.UserId</dd>
+            <dt class="col-sm-2">FirstName</dt>
+            <dd class="col-sm-10">@order.FirstName</dd>
+            <dt class="col-sm-2">LastName</dt>
+            <dd class="col-sm-10">@order.LastName</dd>
+            <dt class="col-sm-2">CompanyName</dt>
+            <dd class="col-sm-10">@order.CompanyName</dd>
+            <dt class="col-sm-2">Country</dt>
+            <dd class="col-sm-10">@order.Country</dd>
+            <dt class="col-sm-2">City</dt>
+            <dd class="col-sm-10">@order.City</dd>
+            <dt class="col-sm-2">Address</dt>
+            <dd class="col-sm-10">@order.Address</dd>
+            <dt class="col-sm-2">Email</dt>
+            <dd class="col-sm-10">@order.Email</dd>
+            <dt class="col-sm-2">Phone</dt>
+            <dd class="col-sm-10">@order.Phone</dd>
+            <dt class="col-sm-2">Comment</dt>
+            <dd class="col-sm-10">@order.Comment</dd>
+            <dt class="col-sm-2">CouponCode</dt>
+            <dd class="col-sm-10">@order.CouponCode</dd>
+            <dt class="col-sm-2">CouponDiscount</dt>
+            <dd class="col-sm-10">@order.CouponDiscount</dd>
+            <dt class="col-sm-2">Shipping</dt>
+            <dd class="col-sm-10">@order.Shipping</dd>
+            <dt class="col-sm-2">SubTotal</dt>
+            <dd class="col-sm-10">@order.SubTotal</dd>
+            <dt class="col-sm-2">Total</dt>
+            <dd class="col-sm-10">@order.Total</dd>
+            <dt class="col-sm-2">CreateDate</dt>
+            <dd class="col-sm-10">@order.CreateDate</dd>
+            <dt class="col-sm-2">TransactionId</dt>
+            <dd class="col-sm-10">@order.TransactionId</dd>
+            <dt class="col-sm-2">TransactionStatus</dt>
+            <dd class="col-sm-10">@order.TransactionStatus</dd>
+        </dl>
+
+        <table class="table table-responsive">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>Count</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in OrderDetails)
+                {
+                    <tr>
+                        <td>@item.ProductTitle</td>
+                        <td>@item.ProductPrice</td>
+                        <td>@item.Count</td>
+                        <td>@(item.Count * item.ProductPrice)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div>
+            <a href="@($"/orders")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Order? order;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+    private List<OrderDetail> OrderDetails;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        order = await GetOrderByIdUseCase.ExecuteAsync(Id);
+
+        if (order is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+        OrderDetails = (await GetGetOrderDetailsUseCase.ExecuteAsync(Id)).ToList();
+    }
+}

@@ -1,0 +1,70 @@
+﻿@page "/user"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IGetUserByIdUseCase GetUserByIdUseCase
+@attribute [Authorize]
+
+<PageTitle>اطلاعات کاربر</PageTitle>
+
+<div class="container" style="margin-top:150px;">
+    <h2>اطلاعات کاربر</h2>
+    <hr />
+    @if (UserInfo is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-2">ایمیل</dt>
+            <dd class="col-sm-10">@UserInfo.Email</dd>
+            <dt class="col-sm-2">نام</dt>
+            <dd class="col-sm-10">@UserInfo.FullName</dd>
+            <dt class="col-sm-2">تاریخ ثبت نام</dt>
+            <dd class="col-sm-10">@UserInfo.RegisterDate.ToString("yyyy/MM/dd")</dd>
+        </dl>
+    }
+</div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+@code {
+    private User? UserInfo;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        UserInfo = await GetUserByIdUseCase.ExecuteAsync(Id);
+       
+        if (UserInfo == null)
+            NavigationManager.NavigateTo("/login");
+        
+    }
+
+    private async Task<int> GetUserIdAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        
+        var user = authState.User;
+        
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+           
+            if (int.TryParse(userIdClaim, out int userId) == true)            
+                return userId;
+            
+        }
+        return 0;
+    }
+}
+

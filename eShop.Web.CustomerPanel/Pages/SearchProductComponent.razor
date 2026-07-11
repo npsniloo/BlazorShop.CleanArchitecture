@@ -1,0 +1,81 @@
+﻿@page "/search"
+@page "/products"
+@page "/"
+@inject ISearchProductUseCase searchProduct
+<div class="shop_section shop_reverse">
+    <div class="container">
+        <div class="row mt-5">
+
+            <div class="col-lg-12 col-md-12">
+                <!--shop wrapper start-->
+                <!--breadcrumbs area start-->
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="/">home</a></li>
+                        <li>shop</li>
+                    </ul>
+                </div>
+                <!--breadcrumbs area end-->
+                <!--shop toolbar start-->
+                <div class="shop_toolbar_wrapper d-flex justify-content-between align-items-center">
+                    <div class="page_amount">
+                        <p><span>@Products.Count</span> Products Found</p>
+                    </div>
+
+                </div>
+                <!--shop toolbar end-->
+                <div class="row shop_wrapper">
+                    @foreach (var product in Products)
+                    {
+
+                        <div class="col-lg-4 col-md-4 col-sm-6 col-6 ">
+                            <div class="single_product">
+                                <ProductCardComponent Product="product" />
+                                <div class="product_list_content">
+                                    <h4 class="product_name"><a href="/ProductDetails?Id=@product.Id">@product.Title</a></h4>
+                                    <p><a href="#">shows</a></p>
+                                    @if (product.Discount != null && product.Discount != 0)
+                                    {
+                                        <div class="price_box">
+                                            @{
+                                                decimal? discountAmount = product.Price.GetValueOrDefault(0) - product.Discount.GetValueOrDefault(0);
+                                            }
+
+                                            <span class="current_price">@discountAmount.GetValueOrDefault(0).ToString("F")</span>
+                                            <span class="old_price">@product.Price.GetValueOrDefault(0).ToString("F")</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="price_box">
+                                            <span class="price">$@product.Price.GetValueOrDefault(0).ToString("F")</span>
+                                        </div>
+                                    }
+                                    <div class="product_desc">
+                                        <p>@product.Description</p>
+                                    </div>
+                                    <div class="add_to_cart">
+                                        <AddToCartComponent ProductId="product.Id" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Product> Products = new();
+    int pageNaumber = 1;
+    int pageSize = 100;
+    protected override async void OnInitialized()
+    {
+        base.OnInitialized();
+        Products = (await searchProduct.Execute(pageSize, pageNaumber, null)).ToList();
+    }
+}

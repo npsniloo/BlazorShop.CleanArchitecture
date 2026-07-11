@@ -1,0 +1,220 @@
+﻿@page "/cart"
+@using BlazorBootstrap
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using eShop.Web.CustomerPanel.ViewModels
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IGetCartItemsUseCase GetCartItemsUseCase
+@inject IUpdateCartCountUseCase UpdateCartCountUseCase
+@inject IClearCartItemsUseCase ClearCartItemsUseCase
+@inject IRemoveProductFromCartUseCase removeProductFromCartUseCase;
+@inject NavigationManager NavigationManager
+
+
+
+<div class="shopping_cart_area" style="margin-top:200px">
+    <div class="container">
+        @if (Model.Any())
+        {
+            <div class="cart_page_inner mb-60">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="cart_page_tabel">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>کالا </th>
+                                        <th>توضیحات</th>
+                                        <th>قیمت</th>
+                                        <th>تعداد</th>
+                                        <th>مجموع</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr class="border-top">
+                                            <td>
+                                                <div class="cart_product_thumb">
+                                                    <img src="/images/products/@item.ImageName" alt="@item.Title">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="cart_product_text ">
+                                                    <h4>@item.Title</h4>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="cart_product_price">
+                                                    @{
+                                                        var finalPrice = item.Price - item.Discount;
+                                                    }
+                                                    <span>@(finalPrice.ToString("N0")) تومان</span>
+                                                </div>
+                                            </td>
+                                            <td class="product_quantity">
+                                                <div class="cart_product_quantity">
+                                                    <input min="1"
+                                                           max="100"
+                                                           @bind="@item.Count"
+                                                           @onblur="async () => await UpdateCount(item.ProductId, item.Count)"
+                                                           type="number">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="cart_product_price">
+                                                    <span>@item.RowSum.ToString("N0") تومان</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="cart_product_remove text-center text-danger">
+                                                    <a @onclick="async () => await RemoveProduct(item.ProductId)"><i class="fa fa-trash"></i></a>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="cart_page_button border-top d-flex justify-content-between">
+                            <div class="shopping_cart_btn">
+                                <a @onclick="async () => await ClearCart()" class="btn btn-primary border">خالی کردن سبد خرید</a>
+                                <a class="btn btn-primary border">به روز رسانی سبد خرید</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--coupon code area start-->
+            <div class="cart_page_bottom">
+                <div class="row d-flex justify-content-end">
+                    <div class="col-lg-4 col-md-6 col-sm-8">
+                        <div class="grand_totall_area">
+                            <div class="grand_totall_inner border-bottom">
+                                <div class="cart_grandtotal d-flex justify-content-between">
+                                    <p>مبلغ کل</p>
+                                    <span>@Model.Sum(x => x.RowSum).ToString("N0") تومان</span>
+                                </div>
+                            </div>
+                            <div class="proceed_checkout_btn">
+                                <a class="btn btn-primary" href="/checkout">تکمیل سفارش</a>
+                            </div>
+                            @*  <a href="#">Checkout with Mutilple Adresses</a> *@
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--coupon code area end-->
+        }
+        else
+        {
+
+            <Alert Color="AlertColor.Secondary"> سبد خرید شما خالی است! </Alert>
+        }
+    </div>
+</div>
+
+@code {
+    public List<CartViewItemViewModel> Model { get; set; } = new();
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCartItemsAsync();
+    }
+
+    private async Task LoadCartItemsAsync()
+    {
+        var userId = await GetUserIdAsync();
+        if (userId == 0)
+        {
+            return;
+        }
+
+        Model = (await GetCartItemsUseCase.ExecuteAsync(userId)).
+                               Select(item => new CartViewItemViewModel
+                               {
+                                   ProductId = item.Id,
+                                   Title = item.ProductTitle,
+                                   ImageName = item.ProductImage,
+                                   Price = item.ProductPrice ?? 0,
+                                   Discount = item.ProductDiscount ?? 0,
+                                   Count = item.Count,
+                                   RowSum = item.RowSum
+                               }).ToList();
+    }
+
+    private async Task<int> GetUserIdAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(userIdClaim, out int userId) == true)
+            {
+                return userId;
+            }
+        }
+        return 0;
+    }
+
+    private async Task UpdateCount(int productId, int count)
+    {
+        var userId = await GetUserIdAsync();
+        if (userId == 0)
+        {
+            return;
+        }
+        try
+        {
+            await UpdateCartCountUseCase.ExecuteAsync(userId, productId, count);
+            await LoadCartItemsAsync();
+        }
+        catch
+        {
+            //
+        }
+    }
+
+    private async Task ClearCart()
+    {
+        var userId = await GetUserIdAsync();
+        if (userId == 0)
+        {
+            return;
+        }
+        try
+        {
+            await ClearCartItemsUseCase.ExecuteAsync(userId);
+            NavigationManager.NavigateTo("/shop");
+        }
+        catch
+        {
+            //
+        }
+
+    }
+
+    private async Task RemoveProduct(int productId)
+    {
+        var userId = await GetUserIdAsync();
+        if (userId == 0)
+            return;
+
+
+        
+        try
+        {
+            await removeProductFromCartUseCase.ExecuteAsync(userId,productId);
+            await LoadCartItemsAsync();
+        }
+        catch
+        {
+            //
+        }
+
+    
+    }
+}

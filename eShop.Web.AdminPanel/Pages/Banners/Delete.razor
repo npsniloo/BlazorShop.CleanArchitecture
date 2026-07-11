@@ -1,0 +1,78 @@
+﻿@page "/banners/delete"
+
+@inject NavigationManager NavigationManager
+@inject IGetBannerByIdUseCase GetBannerByIdUseCase;
+@inject IDeleteBannerUseCase DeleteBannerUseCase;
+@inject IFileHelperService FileService
+@inject IOptions<ImagesSettings> Options
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<p>Are you sure you want to delete this?</p>
+<div>
+    <h2>Banner</h2>
+    <hr />
+    @if (Banner is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-2">Title</dt>
+            <dd class="col-sm-10">@Banner.Title</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">SubTitle</dt>
+            <dd class="col-sm-10">@Banner.SubTitle</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">ImageName</dt>
+            <dd class="col-sm-10">@Banner.ImageName</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Priority</dt>
+            <dd class="col-sm-10">@Banner.Priority</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Link</dt>
+            <dd class="col-sm-10">@Banner.Link</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Position</dt>
+            <dd class="col-sm-10">@Banner.Position</dd>
+        </dl>
+        <EditForm method="post" Model="Banner" OnValidSubmit="DeleteBanner" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(Banner is null)">Delete</button> |
+            <a href="/banners">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+
+    private Banner? Banner;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Banner = await GetBannerByIdUseCase.ExecuteAsync(Id);
+        if (Banner is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    private async Task DeleteBanner()
+    {
+        if (Banner.ImageName != null)        
+            FileService.DeleteImage(Options.Value.BannersPath, Banner.ImageName);        
+        await DeleteBannerUseCase.ExecuteAsync(Banner.Id);
+
+        NavigationManager.NavigateTo("/banners");
+    }
+}

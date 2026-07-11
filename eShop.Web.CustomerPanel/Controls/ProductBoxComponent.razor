@@ -1,0 +1,46 @@
+﻿
+
+<div class="product_thumb">
+    <a href="/ProductDetails?Id=@Product.Id">
+        <img class="primary_img" src="/images/products/@Product.ImageName" alt="consectetur">
+    </a>
+    @if (Product.Discount != null && Product.Discount > 0 && Product.Price > 0)
+    {
+        string discountPercentage = (Product.Discount.GetValueOrDefault(0) / Product.Price.GetValueOrDefault(0) * 100).ToString("F0");
+        <div class="product_label">
+            <span>-@discountPercentage%</span>
+        </div>
+    }
+</div>
+<div class="product_content grid_content text-center">
+
+    <h4 class="product_name"><a href="/ProductDetails?Id=@Product.Id">@Product.Title</a></h4>
+
+    @if (Product.Discount != null && Product.Discount != 0)
+    {
+        <div class="price_box">
+            @{
+                decimal? discountAmount = Product.Price.GetValueOrDefault(0) - Product.Discount.GetValueOrDefault(0);
+            }
+            <span class="current_price">$@discountAmount.GetValueOrDefault(0).ToString("F")</span>
+            <span class="old_price">$@Product.Price.GetValueOrDefault(0).ToString("F")</span>
+        </div>
+    }
+    else
+    {
+        <div class="price_box">
+            <span class="price">$@Product.Price.GetValueOrDefault(0).ToString("F")</span>
+        </div>
+    }
+    <div class="add_to_cart">
+        @if (Product.Qty > 0)
+        {   
+           <AddToCartComponent ProductId="Product.Id" />
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Product Product { get; set; }
+}

@@ -1,0 +1,50 @@
+﻿
+<Tabs>
+    <Tab Title="توضیحات" Active="true">
+        <Content>
+            <div class="product_info_content">
+                @((MarkupString)(Product.FullDesc?.Replace("\n", "<br/>")))
+
+            </div>
+        </Content>
+    </Tab>
+    <Tab Title="نظرات">
+        <Content>
+           <CommentComponent Product="@Product" />
+        </Content>
+    </Tab>
+@*     <Tab Title="Tags">
+        <Content>
+            @if (!string.IsNullOrEmpty(Product.Tags))
+            {
+                <div class="product_info_content">
+
+                    @{
+                        var tags = Product.Tags.Split(",");
+                    }
+                    <ul >
+                        @foreach (var item in tags)
+                        {
+
+
+                            <li>@item</li>
+
+                        }
+                    </ul>
+                </div>
+            }
+        </Content>
+    </Tab>
+    <Tab Title="Custom Tab Video">
+        <Content>
+            <div class="product_tab_vidio text-center">
+                <iframe width="729" height="410" src="@Product.VideoUrl" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+            </div>
+        </Content>
+    </Tab> *@
+</Tabs>
+@code {
+    [Parameter]
+    public Product Product { get; set; }
+}

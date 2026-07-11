@@ -1,0 +1,110 @@
+﻿@using Blazilla
+@using FluentValidation
+@using Microsoft.AspNetCore.Components.Forms
+@inject IViewProductsCommentsUseCase ViewProductsComments
+@inject IValidator<Comment> Validator
+@inject IAddCommentUseCase AddCommentUseCase
+
+<div class="reviews_wrapper">
+
+    @{
+        var commentsCount = Comments.Count;
+        string reviewsCountTex = "";
+        if (commentsCount == 1)
+            reviewsCountTex = "1 نظر";
+        else
+            reviewsCountTex = $"{commentsCount} نظرات";
+    }
+    @if (commentsCount > 0)
+    {
+        <h2>@reviewsCountTex برای @Product.Title</h2>
+    }
+    @foreach (var item in Comments)
+    {
+        <div class="reviews_comment_box">
+            <div class="comment_thmb">
+                <img src="assets/img/blog/comment2.jpg" alt="">
+            </div>
+            <div class="comment_text">
+                <div class="reviews_meta">
+
+                    <p><strong>@item.Name </strong>- @item.CreateDate</p>
+                    <span>@((MarkupString)item.CommentText.Replace("\n", "<br/>"))</span>
+                </div>
+            </div>
+
+        </div>
+    }
+    <div class="comment_title">
+        <h2>نوشتن نظر </h2>
+        <p>ایمیل شما منتشر نخواهد شد. </p>
+    </div>
+
+    <div class="product_review_form">
+        <EditForm method="post" Model="Comment" OnValidSubmit="AddComment" FormName="create" Enhance>
+            <FluentValidator Validator="Validator" />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="row">
+                <div class="col-12">
+                    <label for="review_comment">نظر شما</label>
+                    
+                    <InputTextArea  id="review_comment" rows="4" @bind-Value="Comment.CommentText" class="form-control"></InputTextArea>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <label for="author">نام</label>
+                    <InputText id="author" @bind-Value="Comment.Name" class="form-control" />
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <label for="email">ایمیل </label>
+                    <InputText id="email" @bind-Value="Comment.Email" class="form-control" />
+                </div>
+            </div>
+            <button type="submit">ثبت</button>
+            <br/>
+            <br />
+        </EditForm>
+    </div>
+</div>
+<Preload LoadingText="Loading..." />
+<Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.BottomRight" />
+
+@code {
+    
+    [Parameter]
+    public Product Product { get; set; } = default!;
+    
+    private List<Comment> Comments { get; set; } = new();
+    
+    [SupplyParameterFromForm]
+    private Comment Comment { get; set; } = new();
+    
+    [Inject] protected PreloadService PreloadService { get; set; } = default!;
+    
+    [Inject] protected ToastService ToastService { get; set; } = default!;
+   
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        Comments = await ViewProductsComments.ExecuteAsync(Product.Id);
+    }
+
+    private async Task AddComment()
+    {
+
+            //------------Loading--------------------
+            PreloadService.Show(SpinnerColor.Light, "Saving data... Please Wait...");
+            //------------
+            Comment.ProductId = Product.Id;
+            Comment.CreateDate = DateTime.Now;
+            await AddCommentUseCase.ExecuteAsync(Comment);
+
+            Comments = await ViewProductsComments.ExecuteAsync(Product.Id); 
+            Comment = new();
+
+            await Task.Delay(1500);
+            PreloadService.Hide();
+
+            ToastService.Notify(new(ToastType.Success, "Sauccessfully saved!"));
+        }
+    }
+
+}

@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        .carousel-control-next span, .carousel-control-prev span {
+            background-color: gray;
+        }
+
+        .carousel-control-next, .carousel-control-prev {
+            width: auto !important;
+        }
+    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <link rel="stylesheet" href="@Assets["app.css"]" />
+    <link rel="stylesheet" href="@Assets["OnlineShopBlazor.styles.css"]" />
+   @*  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    *@ 
+    <link href="lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/slick.css">
+    <link rel="stylesheet" href="assets/css/simple-line-icons.css">
+    <link rel="stylesheet" href="assets/css/ionicons.min.css">
+    <link rel="stylesheet" href="assets/css/font.awesome.css">
+    <link rel="stylesheet" href="assets/css/animate.css">
+    <link rel="stylesheet" href="assets/css/nice-select.css">
+    <link rel="stylesheet" href="assets/css/jquery-ui.min.css">
+    <link rel="stylesheet" href="assets/css/magnific-popup.css">
+
+
+    <!-- Main Style CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <!--modernizr min js here
+    <script src="assets/js/vendor/modernizr-3.7.1.min.js"></script>-->
+
+    <ImportMap />
+    <link rel="icon" type="image/png" href="assets/img/logo/fav2.png" >
+
+    <HeadOutlet />
+</head>
+
+<body>
+    <Routes />
+
+   
+    <script src="assets/js/vendor/jquery-3.4.1.min.js"></script>
+  @*   <script src="assets/js/vendor/popper.js"></script> *@
+    <script src="lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="_content/Blazor.Bootstrap/blazor.bootstrap.js"></script>
+    <script src="_framework/blazor.web.js"></script>
+
+    <script src="assets/js/slick.min.js"></script>
+    <script src="assets/js/wow.min.js"></script>
+    <script src="assets/js/jquery.scrollup.min.js"></script>
+    <script src="assets/js/images-loaded.min.js"></script>
+    <script src="assets/js/isotope.pkgd.min.js"></script>
+    <script src="assets/js/jquery.nice-select.js"></script>
+    <script src="assets/js/tippy-bundle.umd.js"></script>
+    <script src="assets/js/jquery-ui.min.js"></script>
+    <script src="assets/js/jquery.instagramFeed.min.js"></script>
+    <script src="assets/js/jquery.magnific-popup.min.js"></script>
+    <script src="assets/js/mailchimp-ajax.js"></script>
+    <script src="assets/js/main.js"></script>
+
+   
+    <script>
+          /*---shop grid activation---*/
+          function changeView(ele){
+
+
+            $('.shop_toolbar_btn ul li a').removeClass('active');
+            $(this).addClass('active');
+
+            var parentsDiv = $('.shop_wrapper');
+            var viewMode = $(this).data('role');
+
+
+            parentsDiv.removeClass('grid_3 grid_4 grid_5 grid_list').addClass(viewMode);
+
+            if(viewMode == 'grid_3'){
+                parentsDiv.children().addClass('col-lg-4 col-md-4 col-sm-6').removeClass('col-lg-3 col-cust-5 col-12');
+
+            }
+
+            if(viewMode == 'grid_4'){
+                parentsDiv.children().addClass('col-lg-3 col-md-4 col-sm-6').removeClass('col-lg-4 col-cust-5 col-12');
+            }
+
+            if(viewMode == 'grid_list'){
+                parentsDiv.children().addClass('col-12').removeClass('col-lg-3 col-lg-4 col-md-4 col-sm-6 col-cust-5');
+            }
+
+        };
+          window.submitLoginForm = function (username,password){
+              const url = new URL("/LoginHandler", window.location.origin);
+              url.searchParams.append("Username", username);
+              url.searchParams.append("Password", password);
+              window.location.href = url;
+          };
+          window.logout = function (){
+              const url = new URL("/LogoutHandler", window.location.origin);
+              window.location.href = url;
+          };
+              /*---canvas menu activation---*/
+              function canvas_open(){
+                      $('.offcanvas_menu_wrapper,.body_overlay').addClass('active');
+              }
+              function canvas_close(){
+                     $('.offcanvas_menu_wrapper,.body_overlay').removeClass('active');
+              }
+
+
+    </script>
+
+  @*   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    <!-- Add chart.js reference if chart components are used in your application. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.0.1/chart.umd.js" integrity="sha512-gQhCDsnnnUfaRzD8k1L5llCCV6O9HN09zClIzzeJ8OJ9MpGmIlCxm+pdCkqTwqJ4JcjbojFr79rl2F1mzcoLMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Add chartjs-plugin-datalabels.min.js reference if chart components with data label feature is used in your application. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js" integrity="sha512-JPcRR8yFa8mmCsfrw4TNte1ZvF1e3+1SdGMslZvmrzDYxS69J7J49vkFL8u6u8PlPJK+H3voElBtUCzaXj+6ig==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Add sortable.js reference if SortableList component is used in your application. -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script> *@
+   
+    <script src="_content/Blazor.Bootstrap/blazor.bootstrap.js"></script>
+
+
+    <script type="application/ld+json">
+        {
+
+        "name": "niloofarShop",
+        "url": "niloofarshop.ir"
+        }
+    </script>
+    <!-- Main JS -->
+
+</body>
+
+</html>

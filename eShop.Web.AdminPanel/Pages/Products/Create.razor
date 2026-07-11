@@ -1,0 +1,148 @@
+﻿@page "/products/create"
+@inject IAddProductUseCase AddProductUseCase
+@inject NavigationManager NavigationManager
+@inject IFileHelperService FileService
+@inject IOptions<ImagesSettings> Options
+@inject PreloadService PreloadService;
+@rendermode InteractiveServer
+
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Product</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Product" OnValidSubmit="AddProduct" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="mb-3">
+                <label for="title" class="form-label">Title:</label>
+                <InputText id="title" @bind-Value="Product.Title" class="form-control" />
+                <ValidationMessage For="() => Product.Title" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description:</label>
+                <InputText id="description" @bind-Value="Product.Description" class="form-control" />
+                <ValidationMessage For="() => Product.Description" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="fulldesc" class="form-label">FullDesc:</label>
+                <InputTextArea rows="4" id="fulldesc" @bind-Value="Product.FullDesc" class="form-control" />
+                <ValidationMessage For="() => Product.FullDesc" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">Price:</label>
+                <InputNumber id="price" @bind-Value="Product.Price" class="form-control" />
+                <ValidationMessage For="() => Product.Price" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="discount" class="form-label">Discount:</label>
+                <InputNumber id="discount" @bind-Value="Product.Discount" class="form-control" />
+                <ValidationMessage For="() => Product.Discount" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="imagename" class="form-label">Main ImageName:</label>
+                @*  <InputText id="imagename" @bind-Value="Product.ImageName" class="form-control" />  *@
+                <InputFile id="imagename" OnChange="LoadMainImageFile" class="form-control" />
+                <ValidationMessage For="() => Product.ImageName" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="Galleryimagename" class="form-label">Gallery ImageName:</label>
+                @*  <InputText id="imagename" @bind-Value="Product.ImageName" class="form-control" />  *@
+                <InputFile id="Galleryimagename" OnChange="LoadGalleryFiles" class="form-control" multiple />
+                <ValidationMessage For="() => Product.ImageName" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="qty" class="form-label">Qty:</label>
+                <InputNumber id="qty" @bind-Value="Product.Qty" class="form-control" />
+                <ValidationMessage For="() => Product.Qty" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="tags" class="form-label">Tags:</label>
+                <InputText id="tags" @bind-Value="Product.Tags" class="form-control" />
+                <ValidationMessage For="() => Product.Tags" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="videourl" class="form-label">VideoUrl:</label>
+                <InputText id="videourl" @bind-Value="Product.VideoUrl" class="form-control" />
+                <ValidationMessage For="() => Product.VideoUrl" class="text-danger" />
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/products">Back to List</a>
+</div>
+<Preload LoadingText="Loading..." />
+
+@code {
+    [SupplyParameterFromForm]
+    private Product Product { get; set; } = new();
+
+    private IBrowserFile UploadedFile { get; set; }
+
+    private List<IBrowserFile> GalleryFiles { get; set; } = new();
+
+    private void LoadMainImageFile(InputFileChangeEventArgs e) => UploadedFile = e.File;
+
+    private void LoadGalleryFiles(InputFileChangeEventArgs e)
+    {
+        GalleryFiles.AddRange(e.GetMultipleFiles());
+    }
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddProduct()
+    {
+
+        var newImages = new List<string>();
+
+        //------------Loading--------------------
+        PreloadService.Show(SpinnerColor.Light, "Saving Product... Please Wait...");
+        //--------------------------------
+
+        if (UploadedFile != null)
+        {
+            var uniqueFileName = FileService.GetUniqueFileName(UploadedFile);
+            
+            Product.ImageName = uniqueFileName;
+            
+            await SaveFileAsync(UploadedFile, uniqueFileName);
+        }
+
+        if (GalleryFiles != null)
+        {
+            foreach (var file in GalleryFiles)
+            {
+                var uniqueFileName = FileService.GetUniqueFileName(file);
+              
+                newImages.Add(uniqueFileName);                              
+                
+                await SaveFileAsync(file, uniqueFileName);
+            }
+        }
+        
+        var command = new AddProductCommand(Product, newImages);
+            
+        await AddProductUseCase.ExecuteAsync(command);
+
+        PreloadService.Hide();
+
+        NavigationManager.NavigateTo("/products");
+    }
+
+    private async Task SaveFileAsync(IBrowserFile file, string fileName)
+    {
+
+        const long maxFileSize = 5 * 1024 * 1024;
+
+        using var stream = UploadedFile.OpenReadStream(maxFileSize);
+
+        await FileService.UploadImageAsync(stream, Options.Value.ProductsPath, fileName);
+    }
+    
+}

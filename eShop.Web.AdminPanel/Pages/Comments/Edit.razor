@@ -1,0 +1,95 @@
+﻿@page "/comments/edit"
+@using Blazilla
+@using FluentValidation
+@inject NavigationManager NavigationManager
+@inject IValidator<Comment> Validator
+@inject IGetCommentByIdUseCase GetCommentByIdUseCase
+@inject IUpdateCommentUseCase UpdateCommentUseCase
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Comment</h2>
+<hr />
+@if (Comment is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Comment" OnValidSubmit="UpdateComment" FormName="edit" Enhance>
+                <FluentValidator Validator="Validator" />
+                <ValidationSummary role="alert" />
+                <input type="hidden" name="Comment.Id" value="@Comment.Id" />
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <InputText id="name" @bind-Value="Comment.Name" class="form-control" />
+                    <ValidationMessage For="() => Comment.Name" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <InputText id="email" @bind-Value="Comment.Email" class="form-control" />
+                    <ValidationMessage For="() => Comment.Email" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="productid" class="form-label">ProductId:</label>
+                    <InputNumber id="productid" @bind-Value="Comment.ProductId" class="form-control" />
+                    <ValidationMessage For="() => Comment.ProductId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="commenttext" class="form-label">CommentText:</label>
+                    <InputText id="commenttext" @bind-Value="Comment.CommentText" class="form-control" />
+                    <ValidationMessage For="() => Comment.CommentText" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="createdate" class="form-label">CreateDate:</label>
+                    <InputDate id="createdate" @bind-Value="Comment.CreateDate" class="form-control" />
+                    <ValidationMessage For="() => Comment.CreateDate" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/comments">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Comment? Comment { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Comment = await GetCommentByIdUseCase.ExecuteAsync(Id);
+
+        if (Comment is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    private async Task UpdateComment()
+    {
+
+        try
+        {
+            var command = new UpdateCommentCommand(Comment!);
+            await UpdateCommentUseCase.ExecuteAsync(command);
+        }
+        catch
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+
+        NavigationManager.NavigateTo("/comments");
+
+    }
+}

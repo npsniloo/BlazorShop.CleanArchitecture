@@ -1,0 +1,54 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+<CascadingAuthenticationState>
+    <AuthorizeView>
+        <Authorized>
+            <a  href="#" class="user-link">
+                <i class="icon-user icons"></i>
+                <span class="">سلام @Name</span>
+               
+                
+            </a>
+            <ul class="dropdown_account_link">
+                <li><a href="/user">حساب من</a></li>
+                <li><a href="/user/orders">لیست سفارش ها</a></li>
+                <li><a @onclick="async () => await RedirectToLogout()"><i class="icon-logout"/>خروج</a></li>
+            </ul>
+        </Authorized>
+        <NotAuthorized>
+            <a href="#">
+                <i class="icon-user icons"></i>
+            </a>
+            <ul class="dropdown_account_link">
+                <li><a href="/login">ورود</a></li>
+                <li><a href="/Register">ثبت نام</a></li>
+            </ul>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+@code {
+    private string Name = "";
+    protected override async Task OnInitializedAsync()
+    {
+        Name = await GetUserNameAsync();
+    }
+    private async Task RedirectToLogout()
+    {
+        await JS.InvokeVoidAsync("logout");
+    }
+    private async Task<string> GetUserNameAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var name = user.FindFirst(ClaimTypes.Name)?.Value;
+            return name;
+        }
+        return "";
+    }
+}
