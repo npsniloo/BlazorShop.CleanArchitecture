@@ -6,17 +6,17 @@ namespace eShop.Application.UseCases.Admin_Portal.Coupons
 {
     public class UpdateCouponUseCase : IUpdateCouponUseCase
     {
-        private readonly IRepository<Coupon, int> repository;
-        private readonly IUnitOfWork unitOfWork;
-        public UpdateCouponUseCase(IRepository<Coupon, int> repo, IUnitOfWork unitOfWork)
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+
+        public UpdateCouponUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task ExecuteAsync(UpdateCouponCommand command)
         {
-            var coupon = await repository.GetByIdAsync(command.Coupon.Id);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var coupon = await unitOfWork.Coupons.GetByIdAsync(command.Coupon.Id);
             if (coupon == null)
                 return;
 

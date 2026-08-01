@@ -5,23 +5,22 @@ namespace eShop.Application.UseCases.Admin_Portal.Products
 {
     public class DeleteProductUseCase : IDeleteProductUseCase
     {
-        private readonly IProductRepository repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public DeleteProductUseCase(IProductRepository repo, IUnitOfWork unitOfWork)
+        public DeleteProductUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task ExecuteAsync(int id)
         {
-            var product = await repository.GetByIdAsync(id);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var product = await unitOfWork.Products.GetByIdAsync(id);
            
             if (product == null)
                 return;
 
-            repository.RemoveProductWithProductGalleries(product);
+            unitOfWork.Products.RemoveProductWithProductGalleries(product);
 
             await unitOfWork.SaveChangesAsync();
         }

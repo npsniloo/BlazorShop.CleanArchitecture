@@ -5,20 +5,20 @@ namespace eShop.Application.UseCases.Admin_Portal.Coupons
 {
     public class DeleteCouponUseCase : IDeleteCouponUseCase
     {
-        private readonly IRepository<Coupon, int> repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public DeleteCouponUseCase(IRepository<Coupon, int> repo, IUnitOfWork unitOfWork)
+        public DeleteCouponUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
+
         public async Task ExecuteAsync(int id)
         {
-            var coupon = await repository.GetByIdAsync(id);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var coupon = await unitOfWork.Coupons.GetByIdAsync(id);
             if (coupon == null)
-                return;            
-            repository.Remove(coupon);
+                return;
+            unitOfWork.Coupons.Remove(coupon);
             await unitOfWork.SaveChangesAsync();
 
         }

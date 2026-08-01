@@ -5,20 +5,20 @@ namespace eShop.Application.UseCases.Admin_Portal.Comments
 {
     public class DeleteCommentUseCase : IDeleteCommentUseCase
     {
-        private readonly IRepository<Comment, int> repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public DeleteCommentUseCase(IRepository<Comment, int> commentRepo, IUnitOfWork unitOfWork)
+        public DeleteCommentUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = commentRepo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
+
         public async Task ExecuteAsync(int id)
         {
-            var menu = await repository.GetByIdAsync(id);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var menu = await unitOfWork.Comments.GetByIdAsync(id);
             if (menu == null)
-                return;            
-            repository.Remove(menu);
+                return;
+            unitOfWork.Comments.Remove(menu);
             await unitOfWork.SaveChangesAsync();
 
         }

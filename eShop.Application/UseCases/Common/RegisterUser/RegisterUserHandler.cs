@@ -8,14 +8,12 @@ namespace eShop.Application.UseCases.Common
 {
     public class RegisterUserHandler : IRegisterUserHandler
     {
-        private readonly IUserRepository repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
         private readonly IPasswordHashService passwordService;
 
-        public RegisterUserHandler(IUserRepository userRepository,IUnitOfWork unitOfWork, IPasswordHashService hashService)
+        public RegisterUserHandler(IUnitOfWorkFactory unitOfWorkFactory, IPasswordHashService hashService)
         {
-            this.repository = userRepository;
-            this.unitOfWork = unitOfWork;
+            this._unitOfWorkFactory = unitOfWorkFactory;
             this.passwordService = hashService;
         }
 
@@ -23,7 +21,9 @@ namespace eShop.Application.UseCases.Common
         {
             var email = command.Email.Trim().ToLowerInvariant();
 
-            var exists = await repository.ExistsByEmailAsync(command.Email);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            
+            var exists = await unitOfWork.Users.ExistsByEmailAsync(command.Email);
             
             if (exists)
                throw new Exception("email or password is not acceptable");
@@ -32,7 +32,7 @@ namespace eShop.Application.UseCases.Common
 
             var user = User.Create(email, command.FullName, passwordHash.Hash, passwordHash.Salt, command.IsAdmin);
 
-            await repository.AddAsync(user);
+            await unitOfWork.Users.AddAsync(user);
 
             await unitOfWork.SaveChangesAsync();
 

@@ -5,20 +5,20 @@ namespace eShop.Application.UseCases.Admin_Portal.Menus
 {
     public class DeleteMenuUseCase : IDeleteMenuUseCase
     {
-        private readonly IRepository<Menu, int> repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public DeleteMenuUseCase(IRepository<Menu, int> menuRepo, IUnitOfWork unitOfWork)
+        public DeleteMenuUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = menuRepo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
+
         public async Task ExecuteAsync(int id)
         {
-            var menu = await repository.GetByIdAsync(id);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var menu = await unitOfWork.Menus.GetByIdAsync(id);
             if (menu == null)
-                return;            
-            repository.Remove(menu);
+                return;
+            unitOfWork.Menus.Remove(menu);
             await unitOfWork.SaveChangesAsync();
 
         }

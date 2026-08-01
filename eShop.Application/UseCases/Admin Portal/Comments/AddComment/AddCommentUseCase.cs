@@ -6,16 +6,17 @@ namespace eShop.Application.UseCases.Admin_Portal.Comments
 {
     public class AddCommentUseCase : IAddCommentUseCase
     {
-        private readonly IRepository<Comment, int> repository;
-        private readonly IUnitOfWork unitOfWork;
-        public AddCommentUseCase(IRepository<Comment, int> commentRepo, IUnitOfWork unitOfWork)
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+
+        public AddCommentUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = commentRepo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
+
         public async Task ExecuteAsync(AddCommentCommand command)
         {
-            await repository.AddAsync(command.Comment);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            await unitOfWork.Comments.AddAsync(command.Comment);
             await unitOfWork.SaveChangesAsync();
         }
     }

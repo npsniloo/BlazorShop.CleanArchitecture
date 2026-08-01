@@ -6,16 +6,17 @@ namespace eShop.Application.UseCases.Common
 {
     public class SendRecoveryCodeHandler : ISendRecoveryCodeHandler
     {
-        private readonly IUserRepository userRepository;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
         private readonly IEmailService emailService;
-        public SendRecoveryCodeHandler(IUserRepository userRepository, IEmailService emailService)
+        public SendRecoveryCodeHandler(IUnitOfWorkFactory unitOfWorkFactory, IEmailService emailService)
         {
-            this.userRepository = userRepository;
+            this._unitOfWorkFactory = unitOfWorkFactory;
             this.emailService = emailService;
         }
         public async Task ExecuteAsync(string email)
         {
-            var usr = await userRepository.GetByEmailAsync(email);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var usr = await unitOfWork.Users.GetByEmailAsync(email);
             if (usr == null)
                 throw new Exception("UserName or Password is wrong ");
 

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace eShop.Domain.Entities;
 
+[Table("OrderDetails")]
 public  class OrderDetail : IEntity<int>
 {
     [Key]

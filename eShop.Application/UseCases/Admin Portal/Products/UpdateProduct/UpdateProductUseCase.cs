@@ -4,18 +4,17 @@ namespace eShop.Application.UseCases.Admin_Portal.Products
 {
     public class UpdateProductUseCase : IUpdateProductUseCase
     {
-        private readonly IProductRepository repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public UpdateProductUseCase(IProductRepository repo, IUnitOfWork unitOfWork)
+        public UpdateProductUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task ExecuteAsync(UpdateProductCommand command)
         {
-            var product = await repository.GetProductByIdWithGalleries(command.Product.Id);
+            using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var product = await unitOfWork.Products.GetProductByIdWithGalleries(command.Product.Id);
             if (product == null)
                 return;
             product.FullDesc = command.Product.FullDesc;

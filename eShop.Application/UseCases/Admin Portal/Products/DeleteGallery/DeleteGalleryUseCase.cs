@@ -5,23 +5,22 @@ namespace eShop.Application.UseCases.Admin_Portal.Products
 {
     public class DeleteGalleryUseCase : IDeleteGalleryUseCase
     {
-        private readonly IRepository<ProductGallery, int> repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public DeleteGalleryUseCase(IRepository<ProductGallery, int> repository, IUnitOfWork unitOfWork)
+        public DeleteGalleryUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repository;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task ExecuteAsync(int id)
         {
-            var gallery = await repository.GetByIdAsync(id);
+           await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var gallery = await unitOfWork.ProductGalleries.GetByIdAsync(id);
             
             if (gallery == null)
                 throw new Exception("gallery doesn't exist");
 
-            repository.Remove(gallery);
+            unitOfWork.ProductGalleries.Remove(gallery);
             await unitOfWork.SaveChangesAsync();
         }
     }

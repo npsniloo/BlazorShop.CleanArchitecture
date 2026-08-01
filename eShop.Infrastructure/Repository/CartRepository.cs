@@ -13,16 +13,13 @@ namespace eShop.Infrastructure.Repository
 {
     internal class CartRepository : Repository<Cart, int>, ICartRepository
     {
-        private readonly IDbContextFactory<OnlineShopContext> _dbFactory;
-
-        public CartRepository(IDbContextFactory<OnlineShopContext> dbFactory) :base(dbFactory)
+        private readonly OnlineShopContext dbContext;
+        public CartRepository(OnlineShopContext context) : base(context)
         {
-            _dbFactory = dbFactory;
+            dbContext = context;
         }
-
         public async Task<List<CartItemReadModel>> GetCartWithProductByUserIdAsync(int userId)
         {
-            using var dbContext = await _dbFactory.CreateDbContextAsync();
             var items = await (from item in dbContext.Carts
                                join p in dbContext.Products
                                on item.ProductId equals p.Id

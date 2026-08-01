@@ -5,15 +5,15 @@ namespace eShop.Application.UseCases.Admin_Portal.Menus
 {
     public class GetMenuByIdUseCase : IGetMenuByIdUseCase
     {
-        private readonly IRepository<Menu, int> repository;
-
-        public GetMenuByIdUseCase(IRepository<Menu, int> menuRepo)
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+        public GetMenuByIdUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = menuRepo;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
         public async Task<Menu?> ExecuteAsync(int id)
         {
-            return await repository.GetByIdAsync(id);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            return await unitOfWork.Menus.GetByIdAsync(id);
         }
     }
 }

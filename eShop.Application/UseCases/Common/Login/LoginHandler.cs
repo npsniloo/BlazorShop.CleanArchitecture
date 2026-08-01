@@ -8,18 +8,18 @@ namespace eShop.Application.UseCases.Common.Login
 {
     public class LoginHandler : ILoginHandler
     {
-        private readonly IUserRepository userRepository;
         private readonly IPasswordHashService passwordService;
-
-        public LoginHandler(IUserRepository userRepository, IPasswordHashService passwordHasherService)
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+        public LoginHandler(IUnitOfWorkFactory unitOfWorkFactory, IPasswordHashService passwordService)
         {
-            this.userRepository = userRepository;
-            this.passwordService = passwordHasherService;
+            this.passwordService = passwordService;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task<LoginResponse> ExecuteAsync(string email, string password)
         {
-            var usr = await userRepository.GetByEmailAsync(email);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var usr = await unitOfWork.Users.GetByEmailAsync(email);
             if (usr == null || passwordService.VerifyPassword(password, usr.PasswordHash, usr.PasswordSalt) == false)
                 throw new Exception("userName or password is wrong ");
             return new LoginResponse(usr.Id, usr.Email, usr.FullName, usr.IsAdmin);

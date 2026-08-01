@@ -5,17 +5,17 @@ namespace eShop.Application.UseCases.Admin_Portal.Orders
 {
     public class AddOrderUseCase : IAddOrderUseCase
     {
-        private readonly IRepository<Order, int> repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public AddOrderUseCase(IRepository<Order, int> menuRepo, IUnitOfWork unitOfWork)
+        public AddOrderUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = menuRepo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
+
         public async Task ExecuteAsync(AddOrderCommand command)
         {
-            await repository.AddAsync(command.Order);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            await unitOfWork.Orders.AddAsync(command.Order);
             await unitOfWork.SaveChangesAsync();
         }
     }

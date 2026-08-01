@@ -5,16 +5,15 @@ namespace eShop.Application.UseCases.Admin_Portal.Users
 {
     public class GetUserByIdUseCase : IGetUserByIdUseCase
     {
-        private readonly IRepository<User, int> repository;
-
-        public GetUserByIdUseCase(IRepository<User, int> repo)
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+        public GetUserByIdUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
-
         public async Task<User?> ExecuteAsync(int id)
         {
-            return await repository.GetByIdAsync(id);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            return await unitOfWork.Users.GetByIdAsync(id);
         }
     }
 }

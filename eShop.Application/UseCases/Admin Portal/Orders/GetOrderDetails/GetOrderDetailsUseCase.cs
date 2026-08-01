@@ -5,16 +5,15 @@ namespace eShop.Application.UseCases.Admin_Portal.Orders
 {
     public class GetOrderDetailsUseCase : IGetOrderDetailsUseCase
     {
-        private readonly IRepository<OrderDetail, int> repository;
-
-        public GetOrderDetailsUseCase(IRepository<OrderDetail, int> repository)
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+        public GetOrderDetailsUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repository;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
-
-        public async Task<IEnumerable<OrderDetail>> ExecuteAsync(int orderId)
+        public async Task<List<OrderDetail>> ExecuteAsync(int orderId)
         {
-            return await repository.GetByFilterAsync((od => od.OrderId == orderId));
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            return await unitOfWork.OrderDetails.GetByFilterAsync((od => od.OrderId == orderId));
         }
     }
 }

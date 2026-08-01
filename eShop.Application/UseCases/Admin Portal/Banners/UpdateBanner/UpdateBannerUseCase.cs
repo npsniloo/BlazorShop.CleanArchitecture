@@ -6,18 +6,16 @@ namespace eShop.Application.UseCases.Admin_Portal.Banners
 {
     public class UpdateBannerUseCase : IUpdateBannerUseCase
     {
-        private readonly IRepository<Banner, int> repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public UpdateBannerUseCase(IRepository<Banner, int> bannerRepository, IUnitOfWork unitOfWork)
+        public UpdateBannerUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = bannerRepository;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
-
         public async Task ExecuteAsync(UpdateBannerCommand command)
         {
-            var bnr = await repository.GetByIdAsync(command.Banner.Id);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var bnr = await unitOfWork.Banners.GetByIdAsync(command.Banner.Id);
             if (bnr == null)
                 return;
             

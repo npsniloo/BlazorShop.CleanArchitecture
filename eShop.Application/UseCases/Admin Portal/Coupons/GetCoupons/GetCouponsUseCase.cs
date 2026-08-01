@@ -10,15 +10,15 @@ namespace eShop.Application.UseCases.Admin_Portal.Coupons
 {
     public class GetCouponsUseCase : IGetCouponsUseCase
     {
-        private readonly IRepository<Coupon, int> repository;
-
-        public GetCouponsUseCase(IRepository<Coupon, int> repo)
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+        public GetCouponsUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
         public async Task<IEnumerable<Coupon>> ExecuteAsync()
         {
-            return await repository.GetAsync();
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            return await unitOfWork.Coupons.GetAsync();
         }
     }
 }

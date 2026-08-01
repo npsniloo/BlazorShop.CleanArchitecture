@@ -5,20 +5,20 @@ namespace eShop.Application.UseCases.Admin_Portal.Orders
 {
     public class DeleteOrderUseCase : IDeleteOrderUseCase
     {
-        private readonly IOrderRepository orderRepository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public DeleteOrderUseCase(IOrderRepository repo, IUnitOfWork unitOfWork)
+        public DeleteOrderUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.orderRepository = repo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
+
         public async Task ExecuteAsync(int id)
         {
-            var order = await orderRepository.GetByIdAsync(id);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var order = await unitOfWork.Orders.GetByIdAsync(id);
             if (order == null)
                 return;
-            orderRepository.RemoveOrderWithDetailsByOrderId(order);
+            unitOfWork.Orders.RemoveOrderWithDetailsByOrderId(order);
             await unitOfWork.SaveChangesAsync();
 
         }

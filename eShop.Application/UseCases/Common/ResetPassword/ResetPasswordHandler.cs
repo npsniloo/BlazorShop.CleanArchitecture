@@ -7,20 +7,21 @@ namespace eShop.Application.UseCases.Common
 {
     public class ResetPasswordHandler : IResetPasswordHandler
     {
-        private readonly IUserRepository userRepository;
-        private readonly IUnitOfWork unitOfWork;
+
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
         private readonly IPasswordHashService passwordService;
 
-        public ResetPasswordHandler(IUserRepository userRepository, IPasswordHashService passwordService, IUnitOfWork unitOfWork)
+        public ResetPasswordHandler(IUnitOfWorkFactory unitOfWorkFactory, IPasswordHashService passwordService)
         {
-            this.userRepository = userRepository;
+            this._unitOfWorkFactory = unitOfWorkFactory;
             this.passwordService = passwordService;
-            this.unitOfWork = unitOfWork;
         }
 
         public async Task ExecuteAsync(ResetPasswordCommand command)
-        {       
-            var usr = await userRepository.GetByEmailAsync(command.Email);
+        {
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+
+            var usr = await unitOfWork.Users.GetByEmailAsync(command.Email);
             if (usr == null || usr.RecoveryCode != command.RecoveryCode)
                 throw new Exception("UserName or code is wrong ");
 

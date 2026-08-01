@@ -6,22 +6,21 @@ namespace eShop.Application.UseCases.Admin_Portal.Users
 {
     public class AddUserUseCase : IAddUserUseCase
     {
-        private readonly IUserRepository repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
         private readonly IPasswordHashService passwordHashService;
 
-        public AddUserUseCase(IUserRepository repo, IUnitOfWork unitOfWork, IPasswordHashService hashService)
+        public AddUserUseCase(IUnitOfWorkFactory unitOfWorkFactory, IPasswordHashService hashService)
         {
-            this.repository = repo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
             this.passwordHashService = hashService;
         }
 
         public async Task ExecuteAsync(AddUserCommand command)
         {
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
             var email = command.Email.Trim().ToLowerInvariant();
            
-            var exists = await repository.ExistsByEmailAsync(email);
+            var exists = await unitOfWork.Users.ExistsByEmailAsync(email);
             
             if (exists)
                 throw new InvalidOperationException("A user with this email already exists.");
@@ -30,7 +29,7 @@ namespace eShop.Application.UseCases.Admin_Portal.Users
            
             var user = User.Create(email,command.FullName,passwordHash.Hash,passwordHash.Salt,command.IsAdmin);
             
-            await repository.AddAsync(user);
+            await unitOfWork.Users.AddAsync(user);
             
             await unitOfWork.SaveChangesAsync();
         }

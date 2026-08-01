@@ -6,12 +6,10 @@ namespace eShop.Application.UseCases.Admin_Portal.Products
     public class GetGalleriesByProdIdUseCase : IGetGalleriesByProdIdUseCase
     {
         private readonly IRepository<ProductGallery, int> repository;
-        private readonly IUnitOfWork unitOfWork;
 
-        public GetGalleriesByProdIdUseCase(IRepository<ProductGallery, int> repo, IUnitOfWork unitOfWork)
+        public GetGalleriesByProdIdUseCase(IRepository<ProductGallery, int> repo)
         {
             this.repository = repo;
-            this.unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<ProductGallery>> ExecuteAsync(int prodId)

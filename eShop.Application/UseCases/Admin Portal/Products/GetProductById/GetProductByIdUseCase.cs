@@ -5,16 +5,16 @@ namespace eShop.Application.UseCases.Admin_Portal.Products
 {
     public class GetProductByIdUseCase : IGetProductByIdUseCase
     {
-        private readonly IRepository<Product, int> repository;
-
-        public GetProductByIdUseCase(IRepository<Product, int> repo)
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+        public GetProductByIdUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task<Product?> ExecuteAsync(int id)
         {
-            return await repository.GetByIdAsync(id);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            return await unitOfWork.Products.GetByIdAsync(id);
         }
     }
 }

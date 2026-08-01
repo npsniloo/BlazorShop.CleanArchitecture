@@ -1,24 +1,23 @@
 ﻿using eShop.Application.Interfaces.Repository;
 using eShop.Domain.Entities;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace eShop.Application.UseCases.Admin_Portal.Comments
 {
     public class GetCommentsUseCase : IGetCommentsUseCase
     {
-        private readonly IRepository<Comment, int> repository;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public GetCommentsUseCase(IRepository<Comment, int> repo)
+        public GetCommentsUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
+
         public async Task<IEnumerable<Comment>> ExecuteAsync()
         {
-            return await repository.GetAsync();
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            return await unitOfWork.Comments.GetAsync();
         }
     }
 }

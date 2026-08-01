@@ -5,15 +5,16 @@ namespace eShop.Application.UseCases.Admin_Portal.Coupons
 {
     public class GetCouponByIdUseCase : IGetCouponByIdUseCase
     {
-        private readonly IRepository<Coupon, int> repository;
 
-        public GetCouponByIdUseCase(IRepository<Coupon, int> repo)
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+        public GetCouponByIdUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
         public async Task<Coupon?> ExecuteAsync(int id)
         {
-            return await repository.GetByIdAsync(id);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            return await unitOfWork.Coupons.GetByIdAsync(id);
         }
     }
 }

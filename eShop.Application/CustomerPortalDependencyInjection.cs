@@ -25,7 +25,6 @@ namespace eShop.Application
 
             services.AddScoped<IViewProductUseCase, ViewProductUseCase>();
 
-            services.AddScoped<IAddOrderDetailUseCase, AddOrderDetailUseCase>();
             services.AddScoped<IGetCouponDiscountByCodeUseCase, GetCouponDiscountByCodeUseCase>();
             services.AddScoped<IGetShippingPriceUseCase, GetShippingPriceUseCase>();
             services.AddScoped<IReduceProductCountUseCase, ReduceProductCountUseCase>();

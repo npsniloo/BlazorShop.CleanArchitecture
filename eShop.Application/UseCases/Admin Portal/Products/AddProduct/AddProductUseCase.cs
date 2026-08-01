@@ -4,19 +4,18 @@ namespace eShop.Application.UseCases.Admin_Portal.Products
 {
     public class AddProductUseCase : IAddProductUseCase
     {
-        private readonly IProductRepository repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public AddProductUseCase(IProductRepository repo, IUnitOfWork unitOfWork)
+        public AddProductUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task ExecuteAsync(AddProductCommand command)
         {
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
             command.Product.AddGalleries(command.Images);
-            await repository.AddProductWithProductGalleriesAsync(command.Product);
+            await unitOfWork.Products.AddProductWithProductGalleriesAsync(command.Product);
             await unitOfWork.SaveChangesAsync();
         }
     }

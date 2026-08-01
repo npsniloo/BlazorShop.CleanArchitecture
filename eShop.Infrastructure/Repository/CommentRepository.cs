@@ -11,15 +11,14 @@ namespace eShop.Infrastructure.Repository
 {
     public class CommentRepository : Repository<Comment, int>, ICommentRepository
     {
-        private readonly IDbContextFactory<OnlineShopContext> _dbFactory;
-        public CommentRepository(IDbContextFactory<OnlineShopContext> dbFactory) : base(dbFactory)
+        private readonly OnlineShopContext dbContext;
+        public CommentRepository(OnlineShopContext context) : base(context)
         {
-            _dbFactory = dbFactory;
+            dbContext = context;
         }
 
         public async Task<int> CountByProductIdAsync(int prodId)
         {
-            using var dbContext = await _dbFactory.CreateDbContextAsync();
             return await dbContext.Comments.Where(c => c.ProductId == prodId).CountAsync();
         }
 

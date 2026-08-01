@@ -5,20 +5,21 @@ namespace eShop.Application.UseCases.Admin_Portal.Banners
 {
     public class DeleteBannerUseCase : IDeleteBannerUseCase
     {
-        private readonly IRepository<Banner, int> repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public DeleteBannerUseCase(IRepository<Banner, int> bannerRepository, IUnitOfWork unitOfWork)
+        public DeleteBannerUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = bannerRepository;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
+
         public async Task ExecuteAsync(int id)
         {
-            var bnr = await repository.GetByIdAsync(id);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+           
+            var bnr = await unitOfWork.Banners.GetByIdAsync(id);
             if (bnr == null)
                 return;            
-            repository.Remove(bnr);
+            unitOfWork.Banners.Remove(bnr);
             await unitOfWork.SaveChangesAsync();
 
         }

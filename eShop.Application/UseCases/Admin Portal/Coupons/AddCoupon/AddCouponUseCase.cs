@@ -5,17 +5,17 @@ namespace eShop.Application.UseCases.Admin_Portal.Coupons
 {
     public class AddCouponUseCase : IAddCouponUseCase
     {
-        private readonly IRepository<Coupon, int> repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public AddCouponUseCase(IRepository<Coupon, int> repo, IUnitOfWork unitOfWork)
+        public AddCouponUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
+
         public async Task ExecuteAsync(AddCouponCommand command)
         {
-            await repository.AddAsync(command.Coupon);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            await unitOfWork.Coupons.AddAsync(command.Coupon);
             await unitOfWork.SaveChangesAsync();
         }
     }

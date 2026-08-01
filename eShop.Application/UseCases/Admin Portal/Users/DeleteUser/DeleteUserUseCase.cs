@@ -5,22 +5,21 @@ namespace eShop.Application.UseCases.Admin_Portal.Users
 {
     public class DeleteUserUseCase : IDeleteUserUseCase
     {
-        private readonly IRepository<User, int> repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public DeleteUserUseCase(IRepository<User, int> repo, IUnitOfWork unitOfWork)
+        public DeleteUserUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task ExecuteAsync(int id)
         {
-            var user = await repository.GetByIdAsync(id);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var user = await unitOfWork.Users.GetByIdAsync(id);
             if (user == null)
                 return;
 
-            repository.Remove(user);
+            unitOfWork.Users.Remove(user);
             await unitOfWork.SaveChangesAsync();
         }
     }

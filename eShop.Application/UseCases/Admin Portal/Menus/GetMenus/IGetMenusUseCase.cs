@@ -9,6 +9,6 @@ namespace eShop.Application.UseCases.Admin_Portal.Menus
 {
     public interface IGetMenusUseCase
     {
-        Task<IEnumerable<Menu>> ExecuteAsync();
+        Task<List<Menu>> ExecuteAsync();
     }
 }

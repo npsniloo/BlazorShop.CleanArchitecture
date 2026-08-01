@@ -5,18 +5,17 @@ namespace eShop.Application.UseCases.Admin_Portal.Settings
 {
     public class AddSettingsUseCase : IAddSettingsUseCase
     {
-        private readonly IRepository<Setting, int> repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public AddSettingsUseCase(IRepository<Setting, int> repo, IUnitOfWork unitOfWork)
+        public AddSettingsUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task ExecuteAsync(AddSettingsCommand command)
         {
-            await repository.AddAsync(command.Settings);
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            await unitOfWork.Settings.AddAsync(command.Settings);
             await unitOfWork.SaveChangesAsync();
         }
     }

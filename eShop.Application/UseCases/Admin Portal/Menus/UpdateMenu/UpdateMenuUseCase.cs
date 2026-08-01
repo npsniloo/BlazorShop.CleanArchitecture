@@ -6,18 +6,17 @@ namespace eShop.Application.UseCases.Admin_Portal.Menus
 {
     public class UpdateMenuUseCase : IUpdateMenuUseCase
     {
-        private readonly IRepository<Menu, int> repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public UpdateMenuUseCase(IRepository<Menu, int> menuRepo, IUnitOfWork unitOfWork)
+        public UpdateMenuUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = menuRepo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task ExecuteAsync(UpdateMenuCommand command)
         {
-            var menu = await repository.GetByIdAsync(command.Menu.Id);
+           await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var menu = await unitOfWork.Menus.GetByIdAsync(command.Menu.Id);
             if (menu == null)
                 return;
             

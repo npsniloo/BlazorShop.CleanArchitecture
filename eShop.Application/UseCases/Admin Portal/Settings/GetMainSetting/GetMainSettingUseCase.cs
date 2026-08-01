@@ -5,16 +5,16 @@ namespace eShop.Application.UseCases.Admin_Portal.Settings
 {
     public class GetMainSettingUseCase : IGetMainSettingUseCase
     {
-        private readonly IRepository<Setting, int> repository;
-
-        public GetMainSettingUseCase(IRepository<Setting, int> repo)
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+        public GetMainSettingUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task<Setting?> ExecuteAsync()
         {
-            return (await repository.GetAsync()).FirstOrDefault();
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            return (await unitOfWork.Settings.GetAsync()).FirstOrDefault();
         }
     }
 }

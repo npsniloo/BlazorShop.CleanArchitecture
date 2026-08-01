@@ -5,15 +5,17 @@ namespace eShop.Application.UseCases.Admin_Portal.Banners
 {
     public class GetBannersUseCase : IGetBannersUseCase
     {
-        private readonly IRepository<Banner, int> repository;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public GetBannersUseCase(IRepository<Banner, int> bannerRepository)
+        public GetBannersUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = bannerRepository;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
         public async Task<IEnumerable<Banner>> ExecuteAsync()
         {
-            return await repository.GetAsync();
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+
+            return await unitOfWork.Banners.GetAsync();
         }
     }
 }

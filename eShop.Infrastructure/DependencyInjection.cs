@@ -16,13 +16,13 @@ namespace eShop.Infrastructure
             //Repository
             services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddSingleton<IUnitOfWorkFactory, UnitOfWorkFactory>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<ICartRepository,CartRepository>();
             services.AddScoped<ICommentRepository,CommentRepository>();
             services.AddScoped<IProductRepository,ProductRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
-            services.AddScoped<IUnitOfWork,UnitOfWork>();
             //Common Services
             services.AddSingleton<IFileHelperService, FileHelperService>();
             services.AddScoped<IEmailService, SmtpEmailService>();

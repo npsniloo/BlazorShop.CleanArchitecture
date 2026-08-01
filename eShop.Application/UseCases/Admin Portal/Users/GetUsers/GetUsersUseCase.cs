@@ -5,16 +5,16 @@ namespace eShop.Application.UseCases.Admin_Portal.Users
 {
     public class GetUsersUseCase : IGetUsersUseCase
     {
-        private readonly IRepository<User, int> repository;
-
-        public GetUsersUseCase(IRepository<User, int> repo)
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+        public GetUsersUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task<IEnumerable<User>> ExecuteAsync()
         {
-            return await repository.GetAsync();
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            return await unitOfWork.Users.GetAsync();
         }
     }
 }

@@ -5,18 +5,17 @@ namespace eShop.Application.UseCases.Admin_Portal.Users
 {
     public class UpdateUserUseCase : IUpdateUserUseCase
     {
-        private readonly IRepository<User, int> repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public UpdateUserUseCase(IRepository<User, int> repo, IUnitOfWork unitOfWork)
+        public UpdateUserUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
-            this.unitOfWork = unitOfWork;
+            _unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task ExecuteAsync(UpdateUserCommand command)
         {
-            var user = await repository.GetByIdAsync(command.User.Id);
+           await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var user = await unitOfWork.Users.GetByIdAsync(command.User.Id);
             if (user == null)
                 return;
 
