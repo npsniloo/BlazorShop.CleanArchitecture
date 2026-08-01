@@ -10,7 +10,7 @@
 @inject IRemoveProductFromCartUseCase removeProductFromCartUseCase;
 @inject NavigationManager NavigationManager
 
-
+@rendermode InteractiveServer
 
 <div class="shopping_cart_area" style="margin-top:200px">
     <div class="container">
@@ -135,7 +135,7 @@
         Model = (await GetCartItemsUseCase.ExecuteAsync(userId)).
                                Select(item => new CartViewItemViewModel
                                {
-                                   ProductId = item.Id,
+                                   ProductId = item.ProductId,
                                    Title = item.ProductTitle,
                                    ImageName = item.ProductImage,
                                    Price = item.ProductPrice ?? 0,
@@ -188,7 +188,7 @@
         try
         {
             await ClearCartItemsUseCase.ExecuteAsync(userId);
-            NavigationManager.NavigateTo("/shop");
+            NavigationManager.NavigateTo("/");
         }
         catch
         {
