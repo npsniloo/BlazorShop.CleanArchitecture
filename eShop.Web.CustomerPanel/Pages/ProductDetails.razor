@@ -1,4 +1,4 @@
-﻿@page "/product/{id:int}"
+﻿@page "/ProductDetails"
 @inject IGetProductDetailsUseCase  GetProductDetailsUseCase
 @inject IGetGalleriesByProdIdUseCase GetGalleriesByProdIdUseCase
 @inject IGetCommentsCountUseCase GetCommentsCount
@@ -162,7 +162,7 @@
         {
             NavigationManager.NavigateTo("not found");
         }
-        Galleries = (await GetGalleriesByProdIdUseCase.ExecuteAsync(Product!.Id)).ToList();
+        Galleries = await GetGalleriesByProdIdUseCase.ExecuteAsync(Product!.Id);
         //------------------------------------
         CommentsCount = await GetCommentsCount.ExecuteAsync(Product!.Id);
     }

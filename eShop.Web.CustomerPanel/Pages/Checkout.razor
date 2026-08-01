@@ -15,10 +15,9 @@
 @inject IGetShippingPriceUseCase GetShippingPrice
 @inject IGetCartItemsUseCase GetCartItems
 @inject ISaveOrderUseCase SaveOrder
-@inject IAddOrderDetailUseCase AddOrderDetailUseCase
 @inject IReduceProductCountUseCase ReduceProductCountUseCase
 @inject IClearCartItemsUseCase ClearCartItemsUseCase
-
+@rendermode InteractiveServer
 
 @attribute [Authorize]
 
@@ -28,7 +27,7 @@
         <div class="checkout_form">
             <div class="row">
                 <div class="col-lg-7 col-md-6">
-                    <EditForm method="post" Model="Order" OnValidSubmit="SubmitOrder">
+                    <EditForm Model="Order" OnValidSubmit="SubmitOrder" >
                         <FluentValidator Validator="Validator" />
 
                         <h3>آدرس</h3>
@@ -182,7 +181,7 @@
                                     <input placeholder="کد تخفیف" @bind-value="CouponCode" type="text" class="form-control" />
                                 </div>
                                 <div class="col-4">
-                                    <button class="btn btn-primary btn-block w-100" type="submit" disabled="@(loading1 ? "disabled" : null)" @onclick="async () => await ApplyCoupon()">
+                                    <button class="btn btn-primary btn-block w-100" type="button" disabled="@loading1" @onclick="async () => await ApplyCoupon()">
                                         @if (loading1)
                                         {
                                             <Spinner Class="me-3" Type="SpinnerType.Dots" Color="SpinnerColor.Light" />
@@ -220,11 +219,15 @@
     private bool loading2 = false;
     private string? errorMessage = null;
     public List<CartItemDto> Products { get; set; } = new();
-    protected async override Task OnInitializedAsync()
+    private CancellationTokenSource cts = new();
+    protected override async  Task OnInitializedAsync()
     {
-        var shippingPrice = await GetShippingPrice.Execute();
-        Order.Shipping = shippingPrice;
-        await LoadCartAsync();
+       // if (firstRender)
+        {
+            var shippingPrice = await GetShippingPrice.Execute();
+            Order.Shipping = shippingPrice;
+            await LoadCartAsync();
+        }
     }
     private async Task LoadCartAsync()
     {
@@ -274,7 +277,7 @@
     }
     private async Task<CouponDiscountDto?> GetCouponDiscountAsync(string code)
     {
-        return await GetCouponDicountByCode.ExecuteAsync(CouponCode);
+        return await GetCouponDicountByCode.ExecuteAsync(code);
     }
 
     private void RemoveCoupon()
@@ -333,25 +336,9 @@
             }
 
             // Use async methods - CRITICAL for Blazor Server
-            await SaveOrder.ExecuteAsync(Order);
-
-            //---------------------------- Save Products in Orderdetails-------------------------
-            List<OrderDetail> orderDetails = new List<OrderDetail>();
-            foreach (var item in Products)
-            {
-                var orderDetail = new OrderDetail
-                {
-                    OrderId = Order.Id,
-                    ProductId = item.ProductId,
-                    ProductPrice = item.ProductPrice.Value,
-                    ProductTitle = item.ProductTitle ?? "",
-                    Count = item.Count
-                };
-                orderDetails.Add(orderDetail);
-            }
-
-            // Use async methods - CRITICAL for Blazor Server
-            await AddOrderDetailUseCase.ExecuteAsync(orderDetails);
+            await SaveOrder.ExecuteAsync(Order,Products,cts.Token);
+            
+           
             loading2 = false;
             StateHasChanged();
 
@@ -374,31 +361,35 @@
                     ProductCounts = Products.Select(p =>
                      new ProductCountDto
                      {
-                         ProductId = p.Id,
+                         ProductId = p.ProductId,
                          ConsumedCount = p.Count
 
                      }).ToList()
                 };
                 await ReduceProductCountUseCase.ExecuteAsync(reduceComand);
-                await ReduceProductCountUseCase.ExecuteAsync(reduceComand);
                 NavigationManager.NavigateTo("/");
             }
         }
-        //catch (Exception ex)
-        // {
+        // catch (Exception ex)
+        //  {
         //     loading2 = false;
-        //     errorMessage = $"Database error: {ex.Message}";
-        //     if (ex.InnerException != null)
-        //     {
-        //         errorMessage += $" - {ex.InnerException.Message}";
-        //     }
-        //     StateHasChanged();
-        // }
+        // //     errorMessage = $"Database error: {ex.Message}";
+        // //     if (ex.InnerException != null)
+        // //     {
+        // //         errorMessage += $" - {ex.InnerException.Message}";
+        // //     }
+        // //     StateHasChanged();
+        //  }
         catch (Exception ex)
         {
             loading2 = false;
             errorMessage = $"An error occurred: {ex.Message}";
             StateHasChanged();
         }
+    }
+    public void Dispose()
+    {
+        cts.Cancel(); // لغو تمام عملیات‌های در حال اجرا
+        cts.Dispose();
     }
 }

@@ -38,31 +38,33 @@
 @code {
     private User? UserInfo;
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
-
     protected async override Task OnParametersSetAsync()
     {
-        UserInfo = await GetUserByIdUseCase.ExecuteAsync(Id);
-       
+        var usereId = await GetUserIdAsync();
+        
+        if (usereId == 0)
+            NavigationManager.NavigateTo("/login");
+
+        UserInfo = await GetUserByIdUseCase.ExecuteAsync(usereId);
+
         if (UserInfo == null)
             NavigationManager.NavigateTo("/login");
-        
+
     }
 
     private async Task<int> GetUserIdAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        
+
         var user = authState.User;
-        
+
         if (user.Identity?.IsAuthenticated == true)
         {
             var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-           
-            if (int.TryParse(userIdClaim, out int userId) == true)            
+
+            if (int.TryParse(userIdClaim, out int userId) == true)
                 return userId;
-            
+
         }
         return 0;
     }

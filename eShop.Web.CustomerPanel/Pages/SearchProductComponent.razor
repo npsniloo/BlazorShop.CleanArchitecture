@@ -2,6 +2,8 @@
 @page "/products"
 @page "/"
 @inject ISearchProductUseCase searchProduct
+
+
 <div class="shop_section shop_reverse">
     <div class="container">
         <div class="row mt-5">
@@ -11,8 +13,8 @@
                 <!--breadcrumbs area start-->
                 <div class="breadcrumb_content">
                     <ul>
-                        <li><a href="/">home</a></li>
-                        <li>shop</li>
+                        <li><a href="/">خانه</a></li>
+                        <li>فروشگاه</li>
                     </ul>
                 </div>
                 <!--breadcrumbs area end-->
@@ -55,8 +57,11 @@
                                         <p>@product.Description</p>
                                     </div>
                                     <div class="add_to_cart">
+                                        @if (product is not null && product.Id > 0)
+                                        {
                                         <AddToCartComponent ProductId="product.Id" />
-                                    </div>
+                                        }
+                                        </div>
                                 </div>
                             </div>
                         </div>
@@ -73,9 +78,9 @@
     private List<Product> Products = new();
     int pageNaumber = 1;
     int pageSize = 100;
-    protected override async void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
-        Products = (await searchProduct.Execute(pageSize, pageNaumber, null)).ToList();
+        Products = (await searchProduct.Execute(pageSize, pageNaumber, null)).ToList();  
     }
 }
