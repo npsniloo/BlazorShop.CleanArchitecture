@@ -1,5 +1,7 @@
 ﻿@page "/banners"
-@inject IGetBannersUseCase GetBannersUseCase;
+@inject IGetBannersUseCase GetBannersUseCase
+@rendermode InteractiveServer
+
 <Grid TItem="Banner"
       Class="table table-hover table-bordered table-striped"
       DataProvider="BannersDataProvider"

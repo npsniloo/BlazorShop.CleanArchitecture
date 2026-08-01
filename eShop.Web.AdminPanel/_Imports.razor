@@ -5,6 +5,7 @@
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
+
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.JSInterop
 @using BlazorBootstrap
@@ -22,5 +23,5 @@
 @using eShop.Domain.Entities
 
 @using Microsoft.Extensions.Options
+
 @attribute [Authorize(Roles = "admin")]
-@layout AdminPanel.Pages.Layout.AdminLayout

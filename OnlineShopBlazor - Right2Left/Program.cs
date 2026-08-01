@@ -35,12 +35,13 @@ builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserDtoValidator>()
 builder.Services.AddValidatorsFromAssemblyContaining<LoginValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<RecoveryValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<ResetPasswordValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CommentValidation>();
 builder.Services.AddAuthentication("MyCookiesAuth")
     .AddCookie("MyCookiesAuth", options =>
     {
         options.Cookie.Name = "OnlineShop.Auth";
         options.LoginPath = "/login";
-        options.AccessDeniedPath="/AccessDenied";
+        options.AccessDeniedPath = "/AccessDenied";
         options.ClaimsIssuer = "shop.niloofarpahlevan.com";
         options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     });
@@ -68,15 +69,19 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
-app.MapStaticAssets();
+
 app.MapRazorComponents<App>()
-    .AddAdditionalAssemblies(typeof(eShop.Web.CustomerPanel.Pages.SearchProductComponent).Assembly)
+    .AddAdditionalAssemblies(typeof(eShop.Web.CustomerPanel.CustomerPanelMarker).Assembly)
+    .AddAdditionalAssemblies(typeof(eShop.Web.AdminPanel.AdminPanelMarker).Assembly)
     .AddInteractiveServerRenderMode();
 app.UseRouting();
 //-------------------Run razor pages
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapRazorPages();
+
 app.UseAntiforgery();
+
+
+app.MapRazorPages();
 //-------------------
 app.Run();
