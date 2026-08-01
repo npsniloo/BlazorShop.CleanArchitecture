@@ -2469,20 +2469,20 @@ input:-ms-input-placeholder, textarea:-ms-input-placeholder {
     display: inline-block;
     text-transform: capitalize;
     font-size: 14px;
-    margin-right: 5px;
-    padding-right: 17px;
+    margin-left: 5px;
+    padding-left: 17px;
     position: relative;
     color: #666666;
     font-weight: 300; }
     .breadcrumb_content ul li::before {
       position: absolute;
-      content: ">";
+      content: "<";
       right: 0;
       top: 50%;
       transform: translatey(-50%); }
     .breadcrumb_content ul li:last-child {
-      margin-right: 0;
-      padding-right: 0; }
+      margin-left: 0;
+      padding-left: 0; }
       .breadcrumb_content ul li:last-child::before {
         display: none; }
     .breadcrumb_content ul li a {
