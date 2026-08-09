@@ -1,4 +1,4 @@
-﻿@page "/settings"
+﻿@page "/admin/settings"
 @inject IGetMainSettingUseCase GetMainSettingUseCase
 @inject IUpdateSettingsUseCase UpdateSettingsUseCase
 @inject IFileHelperService FileService
@@ -90,7 +90,7 @@ else
                     <label for="logo" class="form-label">Logo:</label>
                     <InputFile OnChange="LoadFile" class="form-control" />
                     <br />
-                    <img src="/images/@Setting.Logo" style="max-width:150px" class="img-thumbnail" />
+                    <img src="@GetImagePath(Setting.Logo)" style="max-width:150px" class="img-thumbnail" />
                 </div>
                 <button type="submit" class="btn btn-primary">Save</button>
 
@@ -112,6 +112,10 @@ else
 
     private IBrowserFile UploadedFile { get; set; }
 
+    private string GetImagePath(string imageName)
+    {
+        return $"{Options.Value.LogoPath}/{imageName}";
+    }
     private void LoadFile(InputFileChangeEventArgs e)
     {
         UploadedFile = e.File;
@@ -149,7 +153,7 @@ else
         try
         {
             if (Setting!.Logo != null)
-                FileService.DeleteImage(Options.Value.LogoPath, Setting.Logo);
+                FileService.DeleteImage(Options.Value.UploadLogoPath, Setting.Logo);
 
             //upload logo image
             if (UploadedFile != null)
@@ -160,7 +164,7 @@ else
 
                 using var stream = UploadedFile.OpenReadStream();
 
-                await FileService.UploadImageAsync(stream, Options.Value.LogoPath, uniqueFileName);
+                await FileService.UploadImageAsync(stream, Options.Value.UploadLogoPath, uniqueFileName);
             }
             var command = new UpdateSettingsCommand(Setting!);
 

@@ -1,8 +1,9 @@
-﻿@page "/users/delete"
+﻿@page "/admin/users/delete/{Id:int}"
 
 @inject IGetUserByIdUseCase GetUserByIdUseCase
 @inject IDeleteUserUseCase DeleteUserUseCase
 @inject NavigationManager NavigationManager
+@rendermode InteractiveServer
 
 <PageTitle>Delete</PageTitle>
 
@@ -39,7 +40,7 @@
         </dl>
         <EditForm method="post" Model="user" OnValidSubmit="DeleteUser" FormName="delete" Enhance>
             <button type="submit" class="btn btn-danger" disabled="@(user is null)">Delete</button> |
-            <a href="/users">Back to List</a>
+            <a href="/admin/users">Back to List</a>
         </EditForm>
     }
 </div>
@@ -48,8 +49,8 @@
 
     private User? user;
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
     protected async override Task OnParametersSetAsync()
     {
@@ -65,6 +66,6 @@
     {
         await DeleteUserUseCase.ExecuteAsync(user!.Id);
         
-        NavigationManager.NavigateTo("/users");
+        NavigationManager.NavigateTo("/admin/users");
     }
 }

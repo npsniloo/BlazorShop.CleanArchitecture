@@ -1,7 +1,8 @@
-﻿@page "/users/create"
+﻿@page "/admin/users/create"
 @using eShop.Web.AdminPanel.Pages.UserPages.Dtos
-@inject AddUserUseCase AddUserUseCase
+@inject IAddUserUseCase AddUserUseCase
 @inject NavigationManager NavigationManager
+@rendermode InteractiveServer
 
 <PageTitle>Create</PageTitle>
 
@@ -12,6 +13,7 @@
 <div class="row">
     <div class="col-md-4">
         <EditForm method="post" Model="User" OnValidSubmit="AddUser" FormName="create" Enhance>
+          
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="mb-3">
@@ -40,7 +42,7 @@
 </div>
 
 <div>
-    <a href="/users">Back to List</a>
+    <a href="/admin/users">Back to List</a>
 </div>
 
 @code {
@@ -53,6 +55,6 @@
     {
 
         await AddUserUseCase.ExecuteAsync(new AddUserCommand(User.Email, User.Password, User.FullName, User.IsAdmin));
-        NavigationManager.NavigateTo("/users");
+        NavigationManager.NavigateTo("/admin/users");
     }
 }

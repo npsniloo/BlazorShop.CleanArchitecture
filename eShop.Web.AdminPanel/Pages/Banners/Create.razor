@@ -1,4 +1,4 @@
-﻿@page "/banners/create"
+﻿@page "/admin/banners/create"
 @inject NavigationManager NavigationManager
 @inject IAddBannerUseCase AddBannerUseCase
 @inject IFileHelperService FileService
@@ -13,6 +13,12 @@
 
 <h2>Banner</h2>
 <hr />
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert  alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
 <div class="row">
     <div class="col-md-4">
         <EditForm method="post" Model="Banner" OnValidSubmit="AddBanner" FormName="create" Enhance>
@@ -60,7 +66,7 @@
 </div>
 
 <div>
-    <a href="/banners">Back to List</a>
+    <a href="/admin/banners">Back to List</a>
 </div>
 <Preload LoadingText="Loading..." />
 
@@ -70,6 +76,7 @@
     [SupplyParameterFromForm]
     private Banner Banner { get; set; } = new();
     private IBrowserFile UploadedFile { get; set; }
+    public string? errorMessage { get; set; }
 
     private void LoadFile(InputFileChangeEventArgs e)
     {
@@ -84,19 +91,26 @@
         {
             if (UploadedFile != null)
             {
+                if (UploadedFile.Size > Options.Value.UploadMaxFileSize)
+                {
+                    errorMessage = $"حجم فایل انتخاب شده: {UploadedFile.Size} بیشتر از حد مجاز (5 مگابایت) است.";
+                    PreloadService.Hide();
+                    return;
+                }
                 var uniqueFileName = FileService.GetUniqueFileName(UploadedFile);
                 Banner.ImageName = uniqueFileName;
-                using var stream = UploadedFile.OpenReadStream();
-                await FileService.UploadImageAsync(stream, Options.Value.BannersPath, uniqueFileName);
+                using var stream = UploadedFile.OpenReadStream(Options.Value.UploadMaxFileSize);
+                await FileService.UploadImageAsync(stream, Options.Value.UploadBannersPath, uniqueFileName);
             }
 
             await AddBannerUseCase.ExecuteAsync(new AddBannerCommand(Banner));
 
             PreloadService.Hide();
-            NavigationManager.NavigateTo("/banners");
+            NavigationManager.NavigateTo("/admin/banners");
         }
         catch (Exception ex)
         {
+            errorMessage = "error occured!";
             PreloadService.Hide();
 
         }

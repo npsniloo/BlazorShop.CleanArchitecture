@@ -1,4 +1,4 @@
-﻿@page "/coupons/edit"
+﻿@page "/admin/coupons/edit/{Id:int}"
 @inject IGetCouponByIdUseCase GetCouponByIdUseCase
 @inject IUpdateCouponUseCase UpdateCouponUseCase
 @inject NavigationManager NavigationManager
@@ -38,12 +38,13 @@ else
 }
 
 <div>
-    <a href="/coupons">Back to List</a>
+    <a href="/admin/coupons">Back to List</a>
 </div>
 
 @code {
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+
+    [Parameter]
+    public int Id { get; set; }
 
     [SupplyParameterFromForm]
     private Coupon? Coupon { get; set; }
@@ -71,7 +72,7 @@ else
             throw;
         }
 
-        NavigationManager.NavigateTo("/coupons");
+        NavigationManager.NavigateTo("/admin/coupons");
     }
 
     

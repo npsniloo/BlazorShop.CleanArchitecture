@@ -1,9 +1,9 @@
-﻿@page "/orders"
+﻿@page "/admin/orders"
 @inject IGetOrdersUseCase GetOrdersUseCase
+@rendermode InteractiveServer
+
 <PageTitle>Orders</PageTitle>
-
 <h1>Orders</h1>
-
 
 <Grid TItem="Order"
       Class="table table-hover table-bordered table-striped"
@@ -35,9 +35,8 @@
         @context.CreateDate
     </GridColumn>
     <GridColumn TItem="Order" HeaderText="Actions">
-        <a href="@($"/Orders/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
-        <a href="@($"/Orders/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
-        <a href="@($"/Orders/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
+        <a href="@($"/admin/Orders/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
+        <a href="@($"/admin/Orders/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
     </GridColumn>
 </Grid>
 

@@ -1,4 +1,4 @@
-﻿@page "/products/create"
+﻿@page "/admin/products/create"
 @inject IAddProductUseCase AddProductUseCase
 @inject NavigationManager NavigationManager
 @inject IFileHelperService FileService
@@ -13,6 +13,12 @@
 
 <h2>Product</h2>
 <hr />
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert  alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
 <div class="row">
     <div class="col-md-4">
         <EditForm method="post" Model="Product" OnValidSubmit="AddProduct" FormName="create" Enhance>
@@ -76,7 +82,7 @@
 </div>
 
 <div>
-    <a href="/products">Back to List</a>
+    <a href="/admin/products">Back to List</a>
 </div>
 <Preload LoadingText="Loading..." />
 
@@ -87,6 +93,8 @@
     private IBrowserFile UploadedFile { get; set; }
 
     private List<IBrowserFile> GalleryFiles { get; set; } = new();
+    public string? errorMessage { get; set; }
+
 
     private void LoadMainImageFile(InputFileChangeEventArgs e) => UploadedFile = e.File;
 
@@ -107,10 +115,17 @@
 
         if (UploadedFile != null)
         {
+            if (UploadedFile.Size > Options.Value.UploadMaxFileSize)
+            {
+                errorMessage = $"حجم فایل انتخاب شده: {UploadedFile.Size} بیشتر از حد مجاز (5 مگابایت) است.";
+                PreloadService.Hide();
+                return;
+            }
+
             var uniqueFileName = FileService.GetUniqueFileName(UploadedFile);
-            
+
             Product.ImageName = uniqueFileName;
-            
+
             await SaveFileAsync(UploadedFile, uniqueFileName);
         }
 
@@ -119,30 +134,27 @@
             foreach (var file in GalleryFiles)
             {
                 var uniqueFileName = FileService.GetUniqueFileName(file);
-              
-                newImages.Add(uniqueFileName);                              
-                
+
+                newImages.Add(uniqueFileName);
+
                 await SaveFileAsync(file, uniqueFileName);
             }
         }
-        
+
         var command = new AddProductCommand(Product, newImages);
-            
+
         await AddProductUseCase.ExecuteAsync(command);
 
         PreloadService.Hide();
 
-        NavigationManager.NavigateTo("/products");
+        NavigationManager.NavigateTo("/admin/products");
     }
 
     private async Task SaveFileAsync(IBrowserFile file, string fileName)
     {
+        using var stream = UploadedFile.OpenReadStream(Options.Value.UploadMaxFileSize);
 
-        const long maxFileSize = 5 * 1024 * 1024;
-
-        using var stream = UploadedFile.OpenReadStream(maxFileSize);
-
-        await FileService.UploadImageAsync(stream, Options.Value.ProductsPath, fileName);
+        await FileService.UploadImageAsync(stream, Options.Value.UploadProductsPath, fileName);
     }
-    
+
 }

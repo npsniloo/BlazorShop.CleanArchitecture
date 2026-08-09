@@ -1,10 +1,11 @@
-﻿@page "/comments/edit"
+﻿@page "/admin/comments/edit/{Id:int}"
 @using Blazilla
 @using FluentValidation
 @inject NavigationManager NavigationManager
 @inject IValidator<Comment> Validator
 @inject IGetCommentByIdUseCase GetCommentByIdUseCase
 @inject IUpdateCommentUseCase UpdateCommentUseCase
+@rendermode InteractiveServer
 
 <PageTitle>Edit</PageTitle>
 
@@ -56,12 +57,12 @@ else
 }
 
 <div>
-    <a href="/comments">Back to List</a>
+    <a href="/admin/comments">Back to List</a>
 </div>
 
 @code {
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
     [SupplyParameterFromForm]
     private Comment? Comment { get; set; }
@@ -89,7 +90,7 @@ else
             NavigationManager.NavigateTo("notfound");
         }
 
-        NavigationManager.NavigateTo("/comments");
+        NavigationManager.NavigateTo("/admin/comments");
 
     }
 }

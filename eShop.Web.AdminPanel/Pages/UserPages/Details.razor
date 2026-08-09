@@ -1,7 +1,8 @@
-﻿@page "/users/details"
+﻿@page "/admin/users/details/{Id:int}"
 
 @inject IGetUserByIdUseCase GetUserByIdUseCase
 @inject NavigationManager NavigationManager
+@rendermode InteractiveServer
 
 <PageTitle>Details</PageTitle>
 
@@ -28,8 +29,8 @@
             <dd class="col-sm-10">@user.RecoveryCode</dd>
         </dl>
         <div>
-            <a href="@($"/users/edit?id={user.Id}")">Edit</a> |
-            <a href="@($"/users")">Back to List</a>
+            <a href="@($"/admin/users/edit/{user.Id}")">Edit</a> |
+            <a href="@($"/admin/users")">Back to List</a>
         </div>
     }
 </div>
@@ -37,8 +38,8 @@
 @code {
     private User? user;
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
     protected async override Task OnParametersSetAsync()
     {

@@ -1,6 +1,13 @@
-﻿@page "/banners"
+﻿@page "/admin/banners"
 @inject IGetBannersUseCase GetBannersUseCase
 @rendermode InteractiveServer
+
+<PageTitle>Banners</PageTitle>
+<h1>Banners</h1>
+
+<p>
+    <a class="btn btn-info  p-1" href="admin/banners/create">Create New</a>
+</p>
 
 <Grid TItem="Banner"
       Class="table table-hover table-bordered table-striped"
@@ -13,16 +20,16 @@
     <GridColumn TItem="Banner" HeaderText="Id" PropertyName="Id" HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
         @context.Id
     </GridColumn>
-    <GridColumn TItem="Banner" HeaderText="Title" PropertyName="Title" SortString="Title" >
+    <GridColumn TItem="Banner" HeaderText="Title" PropertyName="Title" SortString="Title">
         @context.Title
     </GridColumn>
-    <GridColumn  TItem="Banner" HeaderText="SubTitle" PropertyName="SubTitle">
+    <GridColumn TItem="Banner" HeaderText="SubTitle" PropertyName="SubTitle">
         @context.SubTitle
     </GridColumn>
-    <GridColumn  TItem="Banner" HeaderText="ImageName" PropertyName="ImageName">
+    <GridColumn TItem="Banner" HeaderText="ImageName" PropertyName="ImageName">
         @context.ImageName
     </GridColumn>
-    <GridColumn   TItem="Banner" HeaderText="Priority" PropertyName="Priority">
+    <GridColumn TItem="Banner" HeaderText="Priority" PropertyName="Priority">
         @context.Priority
     </GridColumn>
     <GridColumn TItem="Banner" HeaderText="Link" PropertyName="Link">
@@ -32,9 +39,9 @@
         @context.Position
     </GridColumn>
     <GridColumn TItem="Banner" HeaderText="Actions">
-        <a href="@($"/banners/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
-        <a href="@($"/banners/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
-        <a href="@($"/banners/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
+        <a href="@($"/admin/banners/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
+        <a href="@($"/admin/banners/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
+        <a href="@($"/admin/banners/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
     </GridColumn>
 
 

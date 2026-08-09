@@ -1,4 +1,4 @@
-﻿@page "/banners/delete"
+﻿@page "/admin/banners/delete/{Id:int}"
 
 @inject NavigationManager NavigationManager
 @inject IGetBannerByIdUseCase GetBannerByIdUseCase;
@@ -46,7 +46,7 @@
         </dl>
         <EditForm method="post" Model="Banner" OnValidSubmit="DeleteBanner" FormName="delete" Enhance>
             <button type="submit" class="btn btn-danger" disabled="@(Banner is null)">Delete</button> |
-            <a href="/banners">Back to List</a>
+            <a href="/admin/banners">Back to List</a>
         </EditForm>
     }
 </div>
@@ -55,8 +55,8 @@
 
     private Banner? Banner;
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -69,10 +69,10 @@
 
     private async Task DeleteBanner()
     {
-        if (Banner.ImageName != null)        
-            FileService.DeleteImage(Options.Value.BannersPath, Banner.ImageName);        
+        if (Banner.ImageName != null)
+            FileService.DeleteImage(Options.Value.UploadBannersPath, Banner.ImageName);
         await DeleteBannerUseCase.ExecuteAsync(Banner.Id);
 
-        NavigationManager.NavigateTo("/banners");
+        NavigationManager.NavigateTo("/admin/banners");
     }
 }

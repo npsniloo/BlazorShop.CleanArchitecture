@@ -1,4 +1,4 @@
-﻿@page "/menus/edit"
+﻿@page "/admin/menus/edit/{Id:int}"
 @inject IUpdateMenuUseCase UpdateMenuUseCase
 @inject IGetMenuByIdUseCase GetMenuByIdUseCase
 @inject NavigationManager NavigationManager
@@ -45,12 +45,12 @@ else
 }
 
 <div>
-    <a href="/menus">Back to List</a>
+    <a href="/admin/menus">Back to List</a>
 </div>
 
 @code {
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
     [SupplyParameterFromForm]
     private Menu? Menu { get; set; }
@@ -76,6 +76,6 @@ else
             throw;
         }
 
-        NavigationManager.NavigateTo("/menus");
+        NavigationManager.NavigateTo("/admin/menus");
     }
 }

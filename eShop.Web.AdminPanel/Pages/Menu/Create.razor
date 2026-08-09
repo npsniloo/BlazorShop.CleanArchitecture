@@ -1,6 +1,7 @@
-﻿@page "/menus/create"
+﻿@page "/admin/menus/create"
 @inject IAddMenuUseCase AddMenuUseCase
 @inject NavigationManager NavigationManager
+@rendermode InteractiveServer
 
 <PageTitle>Create</PageTitle>
 
@@ -36,7 +37,7 @@
 </div>
 
 <div>
-    <a href="/menus">Back to List</a>
+    <a href="/admin/menus">Back to List</a>
 </div>
 
 @code {
@@ -47,6 +48,6 @@
     private async Task AddMenu()
     {
         await AddMenuUseCase.ExecuteAsync(new AddMenuCommand(Menu));
-        NavigationManager.NavigateTo("/menus");
+        NavigationManager.NavigateTo("/admin/menus");
     }
 }

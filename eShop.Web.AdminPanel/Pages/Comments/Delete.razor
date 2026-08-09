@@ -1,4 +1,4 @@
-﻿@page "/comments/delete"
+﻿@page "/admin/comments/delete/{Id:int}"
 @inject IDeleteCommentUseCase DeleteCommentUseCase
 @inject IGetCommentByIdUseCase GetCommentByIdUseCase
 @inject NavigationManager NavigationManager
@@ -38,7 +38,7 @@
         </dl>
         <EditForm method="post" Model="comment" OnValidSubmit="DeleteComment" FormName="delete" Enhance>
             <button type="submit" class="btn btn-danger" disabled="@(comment is null)">Delete</button> |
-            <a href="/comments">Back to List</a>
+            <a href="/admin/comments">Back to List</a>
         </EditForm>
     }
 </div>
@@ -46,8 +46,8 @@
 @code {
     private Comment? comment;
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -62,6 +62,6 @@
     private async Task DeleteComment()
     {
         await DeleteCommentUseCase.ExecuteAsync(Id);
-        NavigationManager.NavigateTo("/comments");
+        NavigationManager.NavigateTo("/admin/comments");
     }
 }

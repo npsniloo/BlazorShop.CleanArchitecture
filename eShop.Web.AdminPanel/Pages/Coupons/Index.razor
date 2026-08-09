@@ -1,12 +1,13 @@
-﻿@page "/coupons"
+﻿@page "/admin/coupons"
 @inject IGetCouponsUseCase GetCouponsUseCase
+@rendermode InteractiveServer
 
 <PageTitle>Coupons</PageTitle>
 
 <h1>Coupons</h1>
 
 <p>
-    <a class="btn btn-info  p-1" href="coupons/create">Create New</a>
+    <a class="btn btn-info  p-1" href="admin/coupons/create">Create New</a>
 </p>
 <Grid TItem="Coupon"
       Class="table table-hover table-bordered table-striped"
@@ -26,9 +27,9 @@
         @context.Discount
     </GridColumn>
     <GridColumn TItem="Coupon" HeaderText="Actions">
-        <a href="@($"/Coupons/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
-        <a href="@($"/Coupons/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
-        <a href="@($"/Coupons/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
+        <a href="@($"/admin/Coupons/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
+        <a href="@($"/admin/Coupons/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
+        <a href="@($"/admin/Coupons/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
     </GridColumn>
 
 

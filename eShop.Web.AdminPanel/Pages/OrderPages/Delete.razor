@@ -1,4 +1,4 @@
-﻿@page "/orders/delete"
+﻿@page "/admin/orders/delete/{Id:int}"
 @inject IGetOrderByIdUseCase GetOrderByIdUseCase
 @inject IDeleteOrderUseCase DeleteOrderUseCase
 @inject NavigationManager NavigationManager
@@ -89,7 +89,7 @@
         </dl>
         <EditForm method="post" Model="order" OnValidSubmit="DeleteOrder" FormName="delete" Enhance>
             <button type="submit" class="btn btn-danger" disabled="@(order is null)">Delete</button> |
-            <a href="/orders">Back to List</a>
+            <a href="/admin/orders">Back to List</a>
         </EditForm>
     }
 </div>
@@ -97,8 +97,8 @@
 @code {
     private Order? order;
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -113,6 +113,6 @@
     private async Task DeleteOrder()
     {
         await DeleteOrderUseCase.ExecuteAsync(Id);
-        NavigationManager.NavigateTo("/orders");
+        NavigationManager.NavigateTo("/admin/orders");
     }
 }

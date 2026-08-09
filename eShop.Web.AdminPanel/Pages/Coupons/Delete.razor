@@ -1,4 +1,4 @@
-﻿@page "/coupons/delete"
+﻿@page "/admin/coupons/delete/{Id:int}"
 @inject IGetCouponByIdUseCase GetCouponByIdUseCase
 @inject IDeleteCouponUseCase DeleteCouponUseCase
 @inject NavigationManager NavigationManager
@@ -15,7 +15,8 @@
     {
         <p><em>Loading...</em></p>
     }
-    else {
+    else
+    {
         <dl class="row">
             <dt class="col-sm-2">Code</dt>
             <dd class="col-sm-10">@coupon.Code</dd>
@@ -26,7 +27,7 @@
         </dl>
         <EditForm method="post" Model="coupon" OnValidSubmit="DeleteCoupon" FormName="delete" Enhance>
             <button type="submit" class="btn btn-danger" disabled="@(coupon is null)">Delete</button> |
-            <a href="/coupons">Back to List</a>
+            <a href="/admin/coupons">Back to List</a>
         </EditForm>
     }
 </div>
@@ -34,12 +35,12 @@
 @code {
     private Coupon? coupon;
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
-       
+
         coupon = await GetCouponByIdUseCase.ExecuteAsync(Id);
 
         if (coupon is null)
@@ -51,6 +52,6 @@
     private async Task DeleteCoupon()
     {
         await DeleteCouponUseCase.ExecuteAsync(Id);
-        NavigationManager.NavigateTo("/coupons");
+        NavigationManager.NavigateTo("/admin/coupons");
     }
 }

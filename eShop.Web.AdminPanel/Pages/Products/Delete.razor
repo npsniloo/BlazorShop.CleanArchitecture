@@ -1,4 +1,4 @@
-﻿@page "/products/delete"
+﻿@page "/admin/products/delete/{Id:int}"
 @inject IDeleteProductUseCase DeleteProductUseCase
 @inject IGetProductByIdUseCase GetProductByIdUseCase
 @inject IGetGalleriesByProdIdUseCase GetProdGalleriesByProdId
@@ -57,7 +57,7 @@
         </dl>
         <EditForm method="post" Model="product" OnValidSubmit="DeleteProduct" FormName="delete" Enhance>
             <button type="submit" class="btn btn-danger" disabled="@(product is null)">Delete</button> |
-            <a href="/products">Back to List</a>
+            <a href="/admin/products">Back to List</a>
         </EditForm>
     }
 </div>
@@ -65,8 +65,8 @@
 @code {
     private Product? product;
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -82,18 +82,18 @@
     {
         //Delete Images files
         if (product!.ImageName != null)
-            FileService.DeleteImage(Options.Value.ProductsPath, product.ImageName);
+            FileService.DeleteImage(Options.Value.UploadProductsPath, product.ImageName);
 
         var galleries = await GetProdGalleriesByProdId.ExecuteAsync(product.Id);
         
         foreach (var item in galleries)
         {
             if (item.ImageName != null)
-                FileService.DeleteImage(Options.Value.ProductsPath, item.ImageName);
+                FileService.DeleteImage(Options.Value.UploadProductsPath, item.ImageName);
         }
        //Delete product and galleries
         await DeleteProductUseCase.ExecuteAsync(product.Id);
 
-        NavigationManager.NavigateTo("/products");
+        NavigationManager.NavigateTo("/admin/products");
     }
 }

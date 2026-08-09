@@ -20,6 +20,10 @@ namespace eShop.Application.UseCases.Admin_Portal.Users
                 return;
 
             // TODO: map User-specific fields here
+            user.Email = command.User.Email;
+            user.FullName = command.User.FullName;
+            user.IsAdmin = command.User.IsAdmin;
+
             await unitOfWork.SaveChangesAsync();
         }
     }

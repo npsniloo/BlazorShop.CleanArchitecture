@@ -1,4 +1,4 @@
-﻿@page "/orders/details"
+﻿@page "/admin/orders/details/{Id:int}"
 @inject IGetOrderByIdUseCase GetOrderByIdUseCase
 @inject IGetOrderDetailsUseCase GetGetOrderDetailsUseCase
 @inject NavigationManager NavigationManager
@@ -77,7 +77,7 @@
             </tbody>
         </table>
         <div>
-            <a href="@($"/orders")">Back to List</a>
+            <a href="@($"/admin/orders")">Back to List</a>
         </div>
     }
 </div>
@@ -85,8 +85,10 @@
 @code {
     private Order? order;
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    
+     [Parameter]
+    public int Id { get; set; }
+
     private List<OrderDetail> OrderDetails;
 
     protected override async Task OnParametersSetAsync()

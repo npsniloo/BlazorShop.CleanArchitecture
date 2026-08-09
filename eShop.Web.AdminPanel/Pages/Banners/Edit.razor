@@ -1,4 +1,4 @@
-﻿@page "/banners/edit"
+﻿@page "/admin/banners/edit/{Id:int}"
 @inject NavigationManager NavigationManager
 @inject IGetBannerByIdUseCase GetBannerByIdUseCase
 @inject IUpdateBannerUseCase UpdateBannerUseCase;
@@ -39,7 +39,7 @@ else
                 <div class="mb-3">
                     <label for="imagename" class="form-label">ImageName:</label>
                     <InputFile OnChange="LoadFile" class="form-control" />
-                    <img src="/images/banners/@Banner.ImageName" style="max-width:150px" class="img-thumbnail" />
+                    <img src="@ShowImagePath(Banner.ImageName)" style="max-width:150px" class="img-thumbnail" />
                     <ValidationMessage For="() => Banner.ImageName" class="text-danger" />
                 </div>
                 <div class="mb-3">
@@ -70,22 +70,26 @@ else
 }
 
 <div>
-    <a href="/banners">Back to List</a>
+    <a href="/admin/banners">Back to List</a>
 </div>
 <Preload LoadingText="Loading..." />
 
 @code {
 
 
+        [Parameter]
+        public int Id { get; set; }
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
-
-    [SupplyParameterFromForm]
-    private Banner? Banner { get; set; }
+        [SupplyParameterFromForm]
+        private Banner? Banner { get; set; }
 
     private IBrowserFile UploadedFile { get; set; }
 
+    private string ShowImagePath(string imageName)
+    {
+        return $"{Options.Value.BannersPath}\\{imageName}";
+    }
+   
     private void LoadFile(InputFileChangeEventArgs e)
     {
         UploadedFile = e.File;
@@ -95,6 +99,7 @@ else
     {
 
         Banner ??= await GetBannerByIdUseCase.ExecuteAsync(Id);
+       
         if (Banner is null)
         {
             NavigationManager.NavigateTo("notfound");
@@ -110,17 +115,17 @@ else
         try
         {
             if (Banner.ImageName != null)
-                FileService.DeleteImage(Options.Value.BannersPath, Banner.ImageName);
+                FileService.DeleteImage(Options.Value.UploadBannersPath, Banner.ImageName);
 
             if (UploadedFile != null)
             {
                 var uniqueFileName = FileService.GetUniqueFileName(UploadedFile);
                 Banner.ImageName = uniqueFileName;
                 using var stream = UploadedFile.OpenReadStream();
-                await FileService.UploadImageAsync(stream, Options.Value.BannersPath, uniqueFileName);
+                await FileService.UploadImageAsync(stream, Options.Value.UploadBannersPath, uniqueFileName);
             }
             await UpdateBannerUseCase.ExecuteAsync(new UpdateBannerCommand(Banner!));
-            NavigationManager.NavigateTo("/banners");
+            NavigationManager.NavigateTo("/admin/banners");
 
         }
         catch (Exception ex)

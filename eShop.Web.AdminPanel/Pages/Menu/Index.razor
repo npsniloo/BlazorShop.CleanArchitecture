@@ -1,5 +1,13 @@
-﻿@page "/menus"
+﻿@page "/admin/menus"
 @inject IGetMenusUseCase GetMenusUseCase
+@rendermode InteractiveServer
+
+<PageTitle>Menus</PageTitle>
+
+<h1>Menus</h1>
+<p>
+    <a class="btn btn-info  p-1" href="admin/menus/create">Create New</a>
+</p>
 
 <Grid TItem="Menu"
       Class="table table-hover table-bordered table-striped"
@@ -23,9 +31,9 @@
     </GridColumn>
    
     <GridColumn TItem="Menu" HeaderText="Actions">
-        <a href="@($"/Menus/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
-        <a href="@($"/Menus/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
-        <a href="@($"/Menus/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
+        <a href="@($"/admin/menus/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
+        <a href="@($"/admin/menus/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
+        <a href="@($"/admin/menus/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
     </GridColumn>
 
 

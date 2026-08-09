@@ -1,4 +1,4 @@
-﻿@page "/comments/details"
+﻿@page "/admin/comments/details/{Id:int}"
 @inject NavigationManager NavigationManager
 @inject IGetCommentByIdUseCase GetCommentByIdUseCase
 
@@ -27,8 +27,8 @@
             <dd class="col-sm-10">@comment.CreateDate</dd>
         </dl>
         <div>
-            <a href="@($"/comments/edit?id={comment.Id}")">Edit</a> |
-            <a href="@($"/comments")">Back to List</a>
+            <a href="@($"/admin/comments/edit/{comment.Id}")">Edit</a> |
+            <a href="@($"/admin/comments")">Back to List</a>
         </div>
     }
 </div>
@@ -36,8 +36,8 @@
 @code {
     private Comment? comment;
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

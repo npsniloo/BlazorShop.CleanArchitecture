@@ -1,4 +1,4 @@
-﻿@page "/users"
+﻿@page "/admin/users"
 @inject IGetUsersUseCase GetUsersUseCase
 @rendermode InteractiveServer
 
@@ -7,7 +7,7 @@
 <h1>Users</h1>
 
 <p>
-    <a class="btn btn-info  p-1" href="users/create">Create New</a>
+    <a class="btn btn-info  p-1" href="admin/users/create">Create New</a>
 </p>
 
 <Grid TItem="User"
@@ -34,9 +34,9 @@
         @context.RegisterDate
     </GridColumn>
     <GridColumn TItem="User" HeaderText="Actions">
-        <a href="@($"/Users/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
-        <a href="@($"/Users/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
-        <a href="@($"/Users/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
+        <a href="@($"/admin/Users/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
+        <a href="@($"/admin/Users/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
+        <a href="@($"/admin/Users/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
     </GridColumn>
 
 

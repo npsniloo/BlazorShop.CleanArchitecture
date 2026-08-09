@@ -1,5 +1,6 @@
-﻿@page "/comments"
+﻿@page "/admin/comments"
 @inject IGetCommentsUseCase GetCommentsUseCase
+@rendermode InteractiveServer
 
 <PageTitle>Comments</PageTitle>
 
@@ -29,9 +30,9 @@
         @context.CreateDate
     </GridColumn>
     <GridColumn TItem="Comment" HeaderText="Actions">
-        <a href="@($"/Comments/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
-        <a href="@($"/Comments/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
-        <a href="@($"/Comments/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
+        <a href="@($"/admin/comments/details/{context.Id}")" class="btn btn-sm btn-info me-1">Details</a>
+        <a href="@($"/admin/comments/edit/{context.Id}")" class="btn btn-sm btn-warning me-1">Edit</a>
+        <a href="@($"/admin/comments/delete/{context.Id}")" class="btn btn-sm btn-warning me-1">Delete</a>
     </GridColumn>
 
 

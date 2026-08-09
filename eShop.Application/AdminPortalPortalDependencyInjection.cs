@@ -50,23 +50,27 @@ namespace eShop.Application
             services.AddScoped<IUpdateOrderUseCase, UpdateOrderUseCase>();
             services.AddScoped<IDeleteOrderUseCase, DeleteOrderUseCase>();
 
-            services.AddScoped<IGetProductByIdUseCase, GetProductByIdUseCase>();
-            services.AddScoped<IGetProductsUseCase, GetProductsUseCase>();
+            services.AddScoped<IAddProductUseCase, AddProductUseCase>();
+            services.AddScoped<IDeleteGalleryUseCase, DeleteGalleryUseCase>();
+            services.AddScoped<IDeleteProductUseCase, DeleteProductUseCase>();
             services.AddScoped<IGetGalleriesByProdIdUseCase, GetGalleriesByProdIdUseCase>();
             services.AddScoped<IGetGalleryByIdUseCase, GetGalleryByIdUseCase>();
-            services.AddScoped<IAddProductUseCase, AddProductUseCase>();
+            services.AddScoped<IGetProductByIdUseCase, GetProductByIdUseCase>();
+            services.AddScoped<IGetProductsUseCase, GetProductsUseCase>();
             services.AddScoped<IUpdateProductUseCase, UpdateProductUseCase>();
-            services.AddScoped<IDeleteProductUseCase, DeleteProductUseCase>();
 
             services.AddScoped<IGetMainSettingUseCase, GetMainSettingUseCase>();
             services.AddScoped<IAddSettingsUseCase, AddSettingsUseCase>();
             services.AddScoped<IUpdateSettingsUseCase, UpdateSettingsUseCase>();
 
+
+
+
+            services.AddScoped<IAddUserUseCase, AddUserUseCase>();
+            services.AddScoped<IDeleteUserUseCase, DeleteUserUseCase>();
             services.AddScoped<IGetUserByIdUseCase, GetUserByIdUseCase>();
             services.AddScoped<IGetUsersUseCase, GetUsersUseCase>();
-            services.AddScoped<IAddOrderUseCase, AddOrderUseCase>();
             services.AddScoped<IUpdateUserUseCase, UpdateUserUseCase>();
-            services.AddScoped<IDeleteUserUseCase, DeleteUserUseCase>();
 
             return services;
         }

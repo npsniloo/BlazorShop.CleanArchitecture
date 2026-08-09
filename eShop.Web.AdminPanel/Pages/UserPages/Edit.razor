@@ -1,7 +1,8 @@
-﻿@page "/users/edit"
+﻿@page "/admin/users/edit/{Id:int}"
 @inject IGetUserByIdUseCase GetUserByIdUseCase
 @inject IUpdateUserUseCase UpdateUserUseCase
 @inject NavigationManager NavigationManager
+@rendermode InteractiveServer
 
 <PageTitle>Edit</PageTitle>
 
@@ -48,13 +49,13 @@ else
 }
 
 <div>
-    <a href="/users">Back to List</a>
+    <a href="/admin/users">Back to List</a>
 </div>
 
 @code {
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
     [SupplyParameterFromForm]
     private User? User { get; set; }
@@ -85,7 +86,7 @@ else
             throw;
         }
 
-        NavigationManager.NavigateTo("/users");
+        NavigationManager.NavigateTo("/admin/users");
     }
 
 }

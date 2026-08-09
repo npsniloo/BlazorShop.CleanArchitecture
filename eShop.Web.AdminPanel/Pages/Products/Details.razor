@@ -1,4 +1,4 @@
-﻿@page "/products/details"
+﻿@page "/admin/products/details/{Id:int}"
 @inject IGetProductByIdUseCase GetProductByIdUseCase
 @inject NavigationManager NavigationManager
 
@@ -35,8 +35,8 @@
             <dd class="col-sm-10">@product.VideoUrl</dd>
         </dl>
         <div>
-            <a href="@($"/products/edit?id={product.Id}")">Edit</a> |
-            <a href="@($"/products")">Back to List</a>
+            <a href="@($"/admin/products/edit/{product.Id}")">Edit</a> |
+            <a href="@($"/admin/products")">Back to List</a>
         </div>
     }
 </div>
@@ -44,8 +44,8 @@
 @code {
     private Product? product;
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
     protected async override Task OnParametersSetAsync()
     {

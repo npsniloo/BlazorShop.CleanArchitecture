@@ -1,4 +1,4 @@
-﻿@page "/coupons/details"
+﻿@page "/admin/coupons/details/{Id:int}"
 @inject IGetCouponByIdUseCase GetCouponByIdUseCase
 @inject NavigationManager NavigationManager
 
@@ -21,8 +21,8 @@
             <dd class="col-sm-10">@coupon.Discount</dd>
         </dl>
         <div>
-            <a href="@($"/coupons/edit?id={coupon.Id}")">Edit</a> |
-            <a href="@($"/coupons")">Back to List</a>
+            <a href="@($"/admin/coupons/edit/{coupon.Id}")">Edit</a> |
+            <a href="@($"/admin/coupons")">Back to List</a>
         </div>
     }
 </div>
@@ -30,8 +30,8 @@
 @code {
     private Coupon? coupon;
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

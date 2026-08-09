@@ -1,4 +1,4 @@
-﻿@page "/coupons/create"
+﻿@page "/admin/coupons/create"
 @inject IAddCouponUseCase AddCouponUseCase
 @inject NavigationManager NavigationManager
 
@@ -29,7 +29,7 @@
 </div>
 
 <div>
-    <a href="/coupons">Back to List</a>
+    <a href="/admin/coupons">Back to List</a>
 </div>
 
 @code {
@@ -40,6 +40,6 @@
     private async Task AddCoupon()
     {
         await AddCouponUseCase.ExecuteAsync(new AddCouponCommand(Coupon));
-        NavigationManager.NavigateTo("/coupons");
+        NavigationManager.NavigateTo("/admin/coupons");
     }
 }

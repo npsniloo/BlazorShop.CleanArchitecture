@@ -1,4 +1,4 @@
-﻿@page "/menus/delete"
+﻿@page "/admin/menus/delete/{Id:int}"
 
 @inject IGetMenuByIdUseCase GetMenuByIdUseCase
 @inject IDeleteMenuUseCase DeleteMenuUseCase
@@ -31,7 +31,7 @@
         </dl>
         <EditForm method="post" Model="menu" OnValidSubmit="DeleteMenu" FormName="delete" Enhance>
             <button type="submit" class="btn btn-danger" disabled="@(menu is null)">Delete</button> |
-            <a href="/menus">Back to List</a>
+            <a href="/admin/menus">Back to List</a>
         </EditForm>
     }
 </div>
@@ -39,8 +39,8 @@
 @code {
     private Menu? menu;
 
-    [SupplyParameterFromQuery]
-    private int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -55,6 +55,6 @@
     private async Task DeleteMenu()
     {
         await DeleteMenuUseCase.ExecuteAsync(Id);
-        NavigationManager.NavigateTo("/menus");
+        NavigationManager.NavigateTo("/admin/menus");
     }
 }

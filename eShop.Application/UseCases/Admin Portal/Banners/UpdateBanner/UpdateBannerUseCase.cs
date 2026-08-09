@@ -18,9 +18,8 @@ namespace eShop.Application.UseCases.Admin_Portal.Banners
             var bnr = await unitOfWork.Banners.GetByIdAsync(command.Banner.Id);
             if (bnr == null)
                 return;
-            
 
-            bnr.Title = command.Banner.Title;
+            bnr.ImageName = command.Banner.ImageName;
             bnr.Link = command.Banner.Link;
             bnr.Priority = command.Banner.Priority;
             bnr.Position = command.Banner.Position;
