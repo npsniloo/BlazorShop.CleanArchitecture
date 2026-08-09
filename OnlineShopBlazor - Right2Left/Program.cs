@@ -1,15 +1,12 @@
 using eShop.Application;
 using eShop.Application.Dtos;
-
 using eShop.Infrastructure;
 using eShop.Infrastructure.Repository;
-
-
-using OnlineShopBlazor.Components;
-using OnlineShopBlazor.Validation;
-
+using eShop.Web.AdminPanel;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using OnlineShopBlazor.Components;
+using OnlineShopBlazor.Validation;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,7 +48,8 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.ConfigureInfraServices();
 builder.Services.ConfigureApplicationaServices();
-
+builder.Services.Configure<ImagesSettings>(
+    builder.Configuration.GetSection("ImagesSettings"));
 builder.Services.AddRazorPages().WithRazorPagesRoot("/Razor Pages");
 
 var app = builder.Build();
