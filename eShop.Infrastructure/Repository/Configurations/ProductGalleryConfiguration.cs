@@ -15,8 +15,7 @@ namespace eShop.Infrastructure.Repository.Configurations
         {
             builder.ToTable("ProductGallery");
 
-            builder.HasKey(x => x.ProductId); // PK همزمان FK است
-
+           
         }
     }
 }

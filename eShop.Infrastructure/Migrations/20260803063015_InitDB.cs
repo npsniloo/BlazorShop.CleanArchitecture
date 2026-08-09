@@ -54,7 +54,8 @@ namespace eShop.Infrastructure.Migrations
                     Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     CommentText = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "datetime", nullable: false)
+                    CreateDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -138,20 +139,6 @@ namespace eShop.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductGallery",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    ImageName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProductGallery", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -214,6 +201,31 @@ namespace eShop.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "ProductGallery",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    ImageName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductGallery", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductGallery_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductGallery_ProductId",
+                table: "ProductGallery",
+                column: "ProductId");
         }
 
         /// <inheritdoc />
@@ -244,13 +256,13 @@ namespace eShop.Infrastructure.Migrations
                 name: "ProductGallery");
 
             migrationBuilder.DropTable(
-                name: "Products");
-
-            migrationBuilder.DropTable(
                 name: "Settings");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Products");
         }
     }
 }

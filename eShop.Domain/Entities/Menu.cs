@@ -10,6 +10,7 @@ public  class Menu : IEntity<int>
     public int Id { get; set; }
 
     [StringLength(50)]
+    [Column("MenuTitle")]
     public string? Title { get; set; }
 
     [StringLength(300)]

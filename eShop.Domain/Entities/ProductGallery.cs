@@ -8,11 +8,11 @@ public class ProductGallery : IEntity<int>
 {
     public ProductGallery(int productId, string imageName)
     {
-        Id = productId;
+        ProductId = productId;
         ImageName = imageName;
     }
-        
-        [Key]
+
+    [Key]
     public int Id { get; set; }
 
     public int ProductId { get; set; }
