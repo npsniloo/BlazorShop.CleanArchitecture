@@ -32,7 +32,7 @@
 </CascadingAuthenticationState>
 @code {
     private string Name = "";
-    protected async override Task OnParametersSetAsync()
+    protected async override Task OnInitializedAsync()
     {
         Name = await GetUserNameAsync();
     }

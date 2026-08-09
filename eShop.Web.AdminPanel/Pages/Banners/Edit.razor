@@ -77,35 +77,34 @@ else
 @code {
 
 
-        [Parameter]
-        public int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
-        [SupplyParameterFromForm]
-        private Banner? Banner { get; set; }
+    [SupplyParameterFromForm]
+    private Banner? Banner { get; set; }
 
     private IBrowserFile UploadedFile { get; set; }
-
-    private string ShowImagePath(string imageName)
-    {
-        return $"{Options.Value.BannersPath}\\{imageName}";
-    }
-   
-    private void LoadFile(InputFileChangeEventArgs e)
-    {
-        UploadedFile = e.File;
-    }
 
     protected override async Task OnParametersSetAsync()
     {
 
         Banner ??= await GetBannerByIdUseCase.ExecuteAsync(Id);
-       
+
         if (Banner is null)
         {
             NavigationManager.NavigateTo("notfound");
         }
     }
 
+    private string ShowImagePath(string imageName)
+    {
+        return $"{Options.Value.BannersPath}\\{imageName}";
+    }
+
+    private void LoadFile(InputFileChangeEventArgs e)
+    {
+        UploadedFile = e.File;
+    }
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateBanner()

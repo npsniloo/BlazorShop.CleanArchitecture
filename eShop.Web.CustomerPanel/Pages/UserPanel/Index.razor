@@ -36,12 +36,14 @@
 <br />
 <br />
 @code {
+    
     private User? UserInfo;
 
-    protected async override Task OnParametersSetAsync()
+
+    protected async override Task OnInitializedAsync()
     {
         var usereId = await GetUserIdAsync();
-        
+
         if (usereId == 0)
             NavigationManager.NavigateTo("/login");
 
@@ -49,9 +51,9 @@
 
         if (UserInfo == null)
             NavigationManager.NavigateTo("/login");
-
     }
 
+    
     private async Task<int> GetUserIdAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
