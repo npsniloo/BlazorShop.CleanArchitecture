@@ -27,7 +27,7 @@
     
     public List<Product> NewProducts { get; set; } = new();
     
-    protected async override Task OnAfterRenderAsync(bool firstRender)
+    protected async override Task OnInitializedAsync()
     {
         NewProducts = await NewProductsUseCase.ExecuteAsync(8);
     }

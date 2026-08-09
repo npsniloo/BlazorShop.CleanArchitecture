@@ -119,6 +119,7 @@
 
 @code {
     public List<CartViewItemViewModel> Model { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
         await LoadCartItemsAsync();

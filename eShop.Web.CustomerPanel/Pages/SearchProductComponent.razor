@@ -78,9 +78,9 @@
     private List<Product> Products = new();
     int pageNaumber = 1;
     int pageSize = 100;
+
     protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
         Products = (await searchProduct.Execute(pageSize, pageNaumber, null)).ToList();  
     }
 }

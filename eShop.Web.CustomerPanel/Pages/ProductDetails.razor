@@ -155,7 +155,8 @@
     private Product? Product { get; set; } = new();
     private List<ProductGallery> Galleries { get; set; } = new();
     private int CommentsCount{ get; set; }
-    protected async override Task OnInitializedAsync()
+
+    protected async override Task OnParametersSetAsync()
     {
         Product = await GetProductDetailsUseCase.ExecuteAsync(Id);
         if (Product == null)

@@ -82,7 +82,7 @@
     
     [Inject] protected ToastService ToastService { get; set; } = default!;
    
-    protected async override Task OnAfterRenderAsync(bool firstRender)
+    protected async override Task OnParametersSetAsync()
     {
         Comments = await ViewProductsComments.ExecuteAsync(Product.Id);
     }

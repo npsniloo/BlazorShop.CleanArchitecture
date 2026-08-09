@@ -37,7 +37,7 @@
 
     public List<Banner> Sliders { get; set; } = new();
 
-    protected async override Task OnAfterRenderAsync(bool firstRender)
+    protected async override Task OnInitializedAsync()
     {
         Sliders = await ShowSliderUseCase.ExecuteAsync();
     }

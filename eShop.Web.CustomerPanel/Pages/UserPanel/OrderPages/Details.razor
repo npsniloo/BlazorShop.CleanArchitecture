@@ -132,7 +132,7 @@
     private int Id { get; set; }
     private List<OrderDetail> OrderDetails;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         var userId = await GetUserIdAsync();
         try
