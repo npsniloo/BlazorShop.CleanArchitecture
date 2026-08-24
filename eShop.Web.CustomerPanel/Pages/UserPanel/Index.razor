@@ -7,10 +7,10 @@
 @inject IGetUserByIdUseCase GetUserByIdUseCase
 @attribute [Authorize]
 
-<PageTitle>اطلاعات کاربر</PageTitle>
+<PageTitle>User Info</PageTitle>
 
 <div class="container" style="margin-top:150px;">
-    <h2>اطلاعات کاربر</h2>
+    <h2>User Info</h2>
     <hr />
     @if (UserInfo is null)
     {
@@ -19,11 +19,11 @@
     else
     {
         <dl class="row">
-            <dt class="col-sm-2">ایمیل</dt>
+            <dt class="col-sm-2">Email</dt>
             <dd class="col-sm-10">@UserInfo.Email</dd>
-            <dt class="col-sm-2">نام</dt>
+            <dt class="col-sm-2">Full Name</dt>
             <dd class="col-sm-10">@UserInfo.FullName</dd>
-            <dt class="col-sm-2">تاریخ ثبت نام</dt>
+            <dt class="col-sm-2">Register Date</dt>
             <dd class="col-sm-10">@UserInfo.RegisterDate.ToString("yyyy/MM/dd")</dd>
         </dl>
     }

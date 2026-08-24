@@ -11,14 +11,14 @@
         <Authorized>
             <a  href="#" class="user-link">
                 <i class="icon-user icons"></i>
-                <span class="">سلام @Name</span>
+                <span class="">Hi @Name</span>
                
                 
             </a>
             <ul class="dropdown_account_link">
-                <li><a href="/user">حساب من</a></li>
-                <li><a href="/user/orders">لیست سفارش ها</a></li>
-                <li><a @onclick="async () => await RedirectToLogout()"><i class="icon-logout"/>خروج</a></li>
+                <li><a href="/user">My Account</a></li>
+                <li><a href="/user/orders">Order List</a></li>
+                <li><a @onclick="async () => await RedirectToLogout()"><i class="icon-logout" />Logout</a></li>
             </ul>
         </Authorized>
         <NotAuthorized>
@@ -26,8 +26,8 @@
                 <i class="icon-user icons"></i>
             </a>
             <ul class="dropdown_account_link">
-                <li><a href="/login">ورود</a></li>
-                <li><a href="/Register">ثبت نام</a></li>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/Register">Register</a></li>
             </ul>
         </NotAuthorized>
     </AuthorizeView>

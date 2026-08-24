@@ -20,25 +20,25 @@
                 </div>
             }
             <div class="mb-3">
-                <label for="email" class="form-label">ایمیل:</label>
+                <label for="email" class="form-label">Email:</label>
                 <InputText id="email" @bind-Value="User.Email" class="form-control" />
                 <ValidationMessage For="() => User.Email" class="text-danger" />
             </div>
             <div class="mb-3">
-                <label for="password" class="form-label">پسورد:</label>
-                <input id="password" type="password" @bind="User.Password" class="form-control" />
+                <label for="password" class="form-label">Password:</label>
+                <PasswordInput id="password" @bind-Value="User.Password" class="form-control" />
                 <ValidationMessage For="() => User.Password" class="text-danger" />
             </div>
             <div class="mb-3">
-                <label for="fullname" class="form-label">نام کامل:</label>
+                <label for="fullname" class="form-label">FullName:</label>
                 <InputText id="fullname" @bind-Value="User.FullName" class="form-control" />
                 <ValidationMessage For="() => User.FullName" class="text-danger" />
             </div>
-            <button type="submit" class="btn btn-primary">ثبت نام</button>
+            <button type="submit" class="btn btn-primary">Register</button>
         </EditForm>
         <br />
         <div>
-            <a href="/login">قبلا ثبت نام کرده اید؟ ورود </a>
+            <a href="/login">Already have an account? Login </a>
         </div>
     </div>
 </div>
@@ -61,7 +61,7 @@
         try
         {
             //------------Loading--------------------
-            PreloadService.Show(SpinnerColor.Light, "در حال ذخیره اطلاعات... لطفا صبر کنید...");
+            PreloadService.Show(SpinnerColor.Light, "Saving data... Please Wait...");
             await Task.Delay(1500);
             //------------
 
@@ -74,7 +74,7 @@
         {
             PreloadService.Hide();
             Console.Error.WriteLine($"Registration failed:{ex.Message}");
-            errorMessage = "خطایی رخ داده است. لطفا کمی بعد دوباره امتحان کنید";
+            errorMessage = "An unexpected error occured during registration. Please try again later.";
         }
     }
 }

@@ -5,9 +5,9 @@
     </a>
     @if (Product.Discount != null && Product.Discount > 0 && Product.Price > 0)
     {
-        string discountPercentage = (Product.Discount.GetValueOrDefault(0) / Product.Price.GetValueOrDefault(0) * 100).ToString("F0");
+        string discountPercentage = (Product.Discount.GetValueOrDefault(0) / Product.Price.GetValueOrDefault(0) * 100).ToString("F");
         <div class="product_label">
-            <span>-@discountPercentage%</span>
+            <span>-$@discountPercentage%</span>
         </div>
     }
 </div>

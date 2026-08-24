@@ -1,0 +1,117 @@
+﻿@page "/"
+
+<!--slider area start-->
+<SliderComponent />
+<!--slider area end-->
+<!--shipping section start-->
+<section class="shipping_section mb-102">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="shipping_inner d-flex justify-content-between">
+                    <div class="single_shipping d-flex align-items-center">
+                        <div class="shipping_icon">
+                            <i class="icon-cursor icons"></i>
+                        </div>
+                        <div class="shipping_text">
+                            <h3>Free Shipping</h3>
+                            <p>Orders over $100</p>
+                        </div>
+                    </div>
+                    <div class="single_shipping d-flex align-items-center">
+                        <div class="shipping_icon">
+                            <i class="icon-reload icons"></i>
+                        </div>
+                        <div class="shipping_text">
+                            <h3>Free Returns</h3>
+                            <p>Within 30 days</p>
+                        </div>
+                    </div>
+                    <div class="single_shipping d-flex align-items-center">
+                        <div class="shipping_icon">
+                            <i class="icon-lock icons"></i>
+                        </div>
+                        <div class="shipping_text">
+                            <h3>100% Payment Secure</h3>
+                            <p>Payment Online</p>
+                        </div>
+                    </div>
+                    <div class="single_shipping d-flex align-items-center">
+                        <div class="shipping_icon">
+                            <i class="icon-tag icons"></i>
+                        </div>
+                        <div class="shipping_text">
+                            <h3>Affordable Price</h3>
+                            <p>Guaranteed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--shipping section end-->
+<!-- banner section start -->
+<Banner1Component />
+<!-- banner section end -->
+<!-- product section start -->
+
+<BestSellingProductsComponent />
+
+<!-- product section end -->
+<!-- banner section start -->
+<Banner2Component />
+<!-- banner section end -->
+<!-- product section start -->
+<section class="product_section mb-80">
+    <div class="container">
+        <div class="product_header d-flex justify-content-between  mb-60">
+            <div class="section_title">
+                <h2>new arrivals</h2>
+            </div>
+        </div>
+        <div class="product_container row">
+            <NewProductsComponent />
+        </div>
+    </div>
+</section>
+<!-- product section end -->
+<!-- blog section start -->
+<!-- blog section end -->
+<!-- instagram section start -->
+<!-- instagram section end -->
+<!--newsletter section start-->
+
+<section class="newsletter_section" style="margin-top:150px">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="newsletter_inner d-flex justify-content-between align-items-center">
+                    <div class="newsletter_text">
+                        <h3>keep connected</h3>
+                        <p>Get updates by subscribe our weekly newsletter</p>
+                    </div>
+                    <div class="newsletter_subscribe">
+                        <form id="mc-form">
+                            <input class="border-0" id="mc-email" type="email" autocomplete="off"
+                                   placeholder="Enter your email address">
+                            <i class="icon-envelope-open icons"></i>
+                            <button class="border-0" id="mc-submit">Subscribe</button>
+                        </form>
+                        <!-- mailchimp-alerts Start -->
+                        <div class="mailchimp-alerts text-centre">
+                            <div class="mailchimp-submitting"></div><!-- mailchimp-submitting end -->
+                            <div class="mailchimp-success"></div><!-- mailchimp-success end -->
+                            <div class="mailchimp-error"></div><!-- mailchimp-error end -->
+                        </div><!-- mailchimp-alerts end -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--newsletter section end-->
+@code {
+
+
+}

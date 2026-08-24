@@ -11,9 +11,9 @@
         var commentsCount = Comments.Count;
         string reviewsCountTex = "";
         if (commentsCount == 1)
-            reviewsCountTex = "1 نظر";
+            reviewsCountTex = "1 Review";
         else
-            reviewsCountTex = $"{commentsCount} نظرات";
+            reviewsCountTex = $"{commentsCount} Reviews";
     }
     @if (commentsCount > 0)
     {
@@ -36,8 +36,8 @@
         </div>
     }
     <div class="comment_title">
-        <h2>نوشتن نظر </h2>
-        <p>ایمیل شما منتشر نخواهد شد. </p>
+        <h2>Add a review </h2>
+        <p>Your email address will not be published.  Required fields are marked </p>
     </div>
 
     <div class="product_review_form">
@@ -46,20 +46,20 @@
             <ValidationSummary class="text-danger" role="alert" />
             <div class="row">
                 <div class="col-12">
-                    <label for="review_comment">نظر شما</label>
+                    <label for="review_comment">Your review </label>
                     
                     <InputTextArea  id="review_comment" rows="4" @bind-Value="Comment.CommentText" class="form-control"></InputTextArea>
                 </div>
                 <div class="col-lg-6 col-md-6">
-                    <label for="author">نام</label>
+                    <label for="author">Name</label>
                     <InputText id="author" @bind-Value="Comment.Name" class="form-control" />
                 </div>
                 <div class="col-lg-6 col-md-6">
-                    <label for="email">ایمیل </label>
+                    <label for="email">Email </label>
                     <InputText id="email" @bind-Value="Comment.Email" class="form-control" />
                 </div>
             </div>
-            <button type="submit">ثبت</button>
+            <button type="submit">Submit</button>
             <br/>
             <br />
         </EditForm>

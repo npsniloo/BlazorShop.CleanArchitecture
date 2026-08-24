@@ -17,33 +17,28 @@ namespace eShop.Application
             services.AddScoped<IGetCustomerOrderByIdUseCase, GetCustomerOrderByIdUseCase>();
             services.AddScoped<IGetCustomerOrdersUseCase, GetCustomerOrdersUseCase>();
             services.AddScoped<IGetGalleriesByProdIdUseCase, GetGalleriesByProdIdUseCase>();
-
             services.AddScoped<IGetUserByIdUseCase, GetUserByIdUseCase>();
-
             services.AddScoped<INewProductsUseCase, NewProductsUseCase>();
-
-
             services.AddScoped<IViewProductUseCase, ViewProductUseCase>();
-
             services.AddScoped<IGetCouponDiscountByCodeUseCase, GetCouponDiscountByCodeUseCase>();
             services.AddScoped<IGetShippingPriceUseCase, GetShippingPriceUseCase>();
             services.AddScoped<IReduceProductCountUseCase, ReduceProductCountUseCase>();
             services.AddScoped<ISaveOrderUseCase, SaveOrderUseCase>();
-
-
             services.AddScoped<IAddCartItemUseCase, AddCartItemUseCase>();
             services.AddScoped<IClearCartItemsUseCase, ClearCartItemsUseCase>();
             services.AddScoped<IRemoveProductFromCartUseCase, RemoveProductFromCartUseCase>();
             services.AddScoped<IGetCartItemsUseCase, GetCartItemsUseCase>();
             services.AddScoped<IGetCartItemByProductIdUseCase, GetCartItemByProductIdUseCase>();
             services.AddScoped<IUpdateCartCountUseCase, UpdateCartCountUseCase>();
-
             services.AddScoped<IShowFirstBannersUseCase, ShowFirstBannersUseCase>();
             services.AddScoped<IShowSecondBannersUseCase, ShowSecondBannersUseCase>();
             services.AddScoped<IShowSliderUseCase, ShowSliderUseCase>();
             services.AddScoped<IViewBestSellingProducts, ViewBestSellingProducts>();
             services.AddScoped<IViewProductsCommentsUseCase, ViewProductsCommentsUseCase>();
             services.AddScoped<IGetSettingsUseCase, GetSettingsUseCase>();
+
+            services.AddScoped<IGetTopMenusUseCase, GetTopMenusUseCase>();
+            services.AddScoped<IGetBottomMenusUseCase, GetBottomMenusUseCase>();
 
 
 

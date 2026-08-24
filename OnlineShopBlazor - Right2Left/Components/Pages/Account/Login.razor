@@ -23,12 +23,12 @@
                 </div>
             }
             <div class="mb-3">
-                <label for="email" class="form-label">ایمیل:</label>
+                <label for="email" class="form-label">Email:</label>
                 <InputText id="email" @bind-Value="LoginModel.Email" class="form-control" />
                 <ValidationMessage For="() => LoginModel.Email" class="text-danger" />
             </div>
             <div class="mb-3">
-                <label for="password" class="form-label">پسورد:</label>
+                <label for="password" class="form-label">Password:</label>
                 <input id="password" type="password" @bind="LoginModel.Password" class="form-control" />
                 <ValidationMessage For="() => LoginModel.Password" class="text-danger" />
             </div>
@@ -42,17 +42,17 @@
                 else
                 {
                     <span>
-                        ورود
+                        Login
                     </span>
                 }
             </button>
         </EditForm>
 
         <div>
-            <a href="/register">میخواهید حساب بسازید؟ ثبت نام </a>
+            <a href="/register">Want to create an account? Register </a>
         </div>
         <div>
-            <a href="/recovery">رمز عبور خود را فراموش کرده‌اید؟ بازیابی رمز عبور </a>
+            <a href="/recovery">Forgot Password? Recover </a>
         </div>
     </div>
 </div>
