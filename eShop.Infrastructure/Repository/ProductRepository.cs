@@ -24,7 +24,7 @@ namespace eShop.Infrastructure.Repository
                 .FirstOrDefaultAsync(x => x.Id == id);
                 
         }
-        public async Task<List<Product>> GetNewProducts(int count)
+        public async Task<List<Product>> GetNewProductsAsync(int count)
         {
             return await dbContext.Products
                 .OrderByDescending(x => x.Id)
