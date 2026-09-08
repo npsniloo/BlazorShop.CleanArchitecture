@@ -56,7 +56,7 @@
 @code {
     public List<BestSellingProduct> BestSellingProducts { get; set; } = new();
    
-    protected async override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
         BestSellingProducts = await ViewBestSellingProducts.ExecuteAsync(8);
     }
