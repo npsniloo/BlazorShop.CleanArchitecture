@@ -4,21 +4,18 @@
 @using Microsoft.JSInterop
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IJSRuntime JS
-
+@rendermode InteractiveServer
 
 <CascadingAuthenticationState>
     <AuthorizeView>
         <Authorized>
             <a  href="#" class="user-link">
-                <i class="icon-user icons"></i>
-                <span class="">Hi @Name</span>
-               
-                
+                <i class="icon-user icons" title="Hi @Name"></i>
             </a>
-            <ul class="dropdown_account_link">
+            <ul class="dropdown_account_link" >
                 <li><a href="/user">My Account</a></li>
                 <li><a href="/user/orders">Order List</a></li>
-                <li><a @onclick="async () => await RedirectToLogout()"><i class="icon-logout" />Logout</a></li>
+                <li><a @onclick="async () => await RedirectToLogout()">Logout</a></li>
             </ul>
         </Authorized>
         <NotAuthorized>
