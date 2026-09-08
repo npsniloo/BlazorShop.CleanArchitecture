@@ -12,28 +12,27 @@
     <title>niloofarpahlevan.com </title>
     <meta name="description" content="OnlineShop Blazor Website" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="profile" href="assets/img/logo/lotus2.png" type="image/png">
+    <link rel="profile" href="assets/img/logo/{@MySettings.Logo}" type="image/png">
     <link rel="canonical" href="http://shop.niloofarpahlevan.com" />
 
     <!-- Open Graph (OG) meta tags are snippets of code that control how URLs are displayed when shared on social media  -->
-    <!-- <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Uthr – Fashion eCommerce HTML Template" />
     <meta property="og:url" content="PAGE_URL" />
-    <meta property="og:site_name" content="SITE_NAME" /> -->
+    <meta property="og:site_name" content="SITE_NAME" />
     <!-- For the og:image content, replace the # with a link of an image -->
-    <!-- <meta property="og:image" content="#" />
+    <meta property="og:image" content="#" />
     <meta property="og:description"
-        content="240+ Best Bootstrap Templates are available on this website. Find your template for your project compatible with the most popular HTML library in the world." /> -->
+          content="240+ Best Bootstrap Templates are available on this website. Find your template for your project compatible with the most popular HTML library in the world." /> -->
     <!-- Add site Favicon -->
-    <link rel="icon" href="assets/img/logo/lotus2.png" type="image/png" />
+    <link rel="icon" href="assets/img/logo/{@MySettings.Logo}" type="image/png" />
 
-    @*    <link rel="icon" href="../wwwroot/assets/img/logo/lotus2.png" sizes="32x32" />
+    <link rel="icon" href="../wwwroot/assets/img/logo/{@MySettings.Logo}" sizes="32x32" />
     <link rel="icon" href="https://hasthemes.com/wp-content/uploads/2019/04/cropped-favicon-192x192.png"
           sizes="192x192" />
     <link rel="apple-touch-icon" href="https://hasthemes.com/wp-content/uploads/2019/04/cropped-favicon-180x180.png" />
-    <meta name="msapplication-TileImage"
-          content="https://hasthemes.com/wp-content/uploads/2019/04/cropped-favicon-270x270.png" /> *@
+    <meta name="msapplication-TileImage" content="https://hasthemes.com/wp-content/uploads/2019/04/cropped-favicon-270x270.png" />
 
     <!-- CSS
     ========================= -->
@@ -54,30 +53,30 @@
                     <div class="canvas_close" onclick="canvas_close()">
                         <a href="javascript:void(0)"><i class="ion-android-close"></i></a>
                     </div>
-                       <div class="header_contact_info">
+                    <div class="header_contact_info">
                         <ul class="d-flex">
                             <li class="text-white">
                                 <i class="icons icon-phone"></i> <a href="tel:@MySettings.Phone">
-                                    @MySettings.Phone
-                                </a>
-                            </li>
-                            <li class="text-white">
-                                <i class="icon-envelope-letter icons"></i>
-                                <a href="#">@MySettings.Email</a>
-                            </li>
-                        </ul>
-                    </div> 
-                    <div class="header_social d-flex">
-                        <span>Follow us</span>
-                        <ul class="d-flex">
-                            <li><a href="@MySettings.Twitter"><i class="icon-social-twitter icons"></i></a></li>
-                            <li><a href="@MySettings.FaceBook"><i class="icon-social-facebook icons"></i></a></li>
-                            <li><a href="@MySettings.Instagram"><i class="icon-social-instagram icons"></i></a></li>
-                            <li><a href="@MySettings.Youtube"><i class="icon-social-youtube icons"></i></a></li>
-                        </ul>
-                    </div>
-                    <div id="menu" class="text-left ">
-                        <ul class="offcanvas_main_menu">
+                                @MySettings.Phone
+                            </a>
+                        </li>
+                        <li class="text-white">
+                            <i class="icon-envelope-letter icons"></i>
+                            <a href="#">@MySettings.Email</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="header_social d-flex">
+                    <span>Follow us</span>
+                    <ul class="d-flex">
+                        <li><a href="@MySettings.Twitter"><i class="icon-social-twitter icons"></i></a></li>
+                        <li><a href="@MySettings.FaceBook"><i class="icon-social-facebook icons"></i></a></li>
+                        <li><a href="@MySettings.Instagram"><i class="icon-social-instagram icons"></i></a></li>
+                        <li><a href="@MySettings.Youtube"><i class="icon-social-youtube icons"></i></a></li>
+                    </ul>
+                </div>
+                <div id="menu" class="text-left ">
+                    <ul class="offcanvas_main_menu">
                         @foreach (var item in TopMenu)
                         {
                             <li>
@@ -85,16 +84,16 @@
                             </li>
                         }
 
-                        </ul>
-                    </div>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 </div>
+</div>
 <!--offcanvas menu area end-->
 <!--mini cart-->
-<div class="mini_cart">
+<!--<div class="mini_cart">
     <div class="cart_gallery">
         <div class="cart_close">
             <div class="cart_text">
@@ -149,7 +148,7 @@
             <a href="/checkout"><i class="fa fa-sign-in"></i> Checkout</a>
         </div>
     </div>
-</div>
+</div>!-->
 <!--mini cart end-->
 <!--header area start-->
 <header class="header_section header_transparent">
@@ -171,42 +170,42 @@
                         <div class="free_shipping_text">
                             <p class="text-white">
                                 Free shipping worldwide for orders over $99 <a href="#">
-                                    Learn
-                                    More
-                                </a>
-                            </p>
+                                Learn
+                                More
+                            </a>
+                        </p>
+                    </div>
+                    <div class="header_top_sidebar d-flex align-items-center">
+                        <div class="header_social d-flex">
+                            <span>Follow us</span>
+                            <ul class="d-flex">
+                                <li><a href="@MySettings.Twitter"><i class="icon-social-twitter icons"></i></a></li>
+                                <li><a href="@MySettings.FaceBook"><i class="icon-social-facebook icons"></i></a></li>
+                                <li><a href="@MySettings.Instagram"><i class="icon-social-instagram icons"></i></a></li>
+                                <li><a href="@MySettings.Youtube"><i class="icon-social-youtube icons"></i></a></li>
+                            </ul>
                         </div>
-                        <div class="header_top_sidebar d-flex align-items-center">
-                            <div class="header_social d-flex">
-                                <span>Follow us</span>
-                                <ul class="d-flex">
-                                    <li><a href="@MySettings.Twitter"><i class="icon-social-twitter icons"></i></a></li>
-                                    <li><a href="@MySettings.FaceBook"><i class="icon-social-facebook icons"></i></a></li>
-                                    <li><a href="@MySettings.Instagram"><i class="icon-social-instagram icons"></i></a></li>
-                                    <li><a href="@MySettings.Youtube"><i class="icon-social-youtube icons"></i></a></li>
-                                </ul>
-                            </div>
-                            <div class="language_currency">
-                            </div>
+                        <div class="language_currency">
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <div class="main_header" style="background-color:#f1f1f1">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="header_container d-flex justify-content-between align-items-center">
+</div>
+
+<div class="main_header" >
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="header_container d-flex justify-content-between align-items-center">
                     <div class="header_logo">
                         <a class="sticky_none" href="index.html"><img src="/images/@MySettings.Logo" alt=""></a>
                     </div>
 
-                        <!--main menu start-->
-                         <div class="main_menu d-none d-lg-block">
-                            <nav>
+                    <!--main menu start-->
+                    <div class="main_menu d-none d-lg-block">
+                        <nav>
                             <ul class="d-flex">
                                 @foreach (var item in TopMenu)
                                 {
@@ -215,36 +214,38 @@
                                     </li>
                                 }
                             </ul>
-                            </nav>
-                        </div>
-                        <div class="canvas_open" onclick="canvas_open()">
-                            <a href="javascript:void(0)"><i class="ion-navicon"></i></a>
-                        </div>
-                        <div class="header_account">
-                            <ul class="d-flex">
-                                <li class="header_search"><a><i class="icon-magnifier icons"></i></a></li> 
-                                <li class="shopping_cart">
-                                    <a href="/cart"><i class="icon-basket-loaded icons"></i></a>
-                                </li>
-                                <li class="account_link">
-                                     <UserMenuComponent /> 
-                                </li>
-                            </ul>
-                        </div>
-
-
+                        </nav>
                     </div>
+                    <div class="canvas_open" onclick="canvas_open()">
+                        <a href="javascript:void(0)"><i class="ion-navicon"></i></a>
+                    </div>
+                    
+                    <div class="header_account">
+                        <ul class="d-flex">
+                            <li class="header_search"><a><i class="icon-magnifier icons"></i></a></li>
+                           
+                            <li class="account_link">
+                                <UserMenuComponent />
+                            </li>
+                            <li class="shopping_cart">
+                                <a href="/cart"><i class="icon-basket-loaded icons"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+
+
                 </div>
             </div>
         </div>
     </div>
-    <!-- page search box -->
-    <div class="page_search_box">
-        <div class="search_close">
-            <i class="ion-close-round"></i>
-        </div>
-        <Search />
+</div>
+<!-- page search box -->
+<div class="page_search_box">
+    <div class="search_close">
+        <i class="ion-close-round"></i>
     </div>
+    <Search />
+</div>
 
 </header>
 
@@ -266,10 +267,9 @@
 <!-- blog section end -->
 <!-- instagram section start -->
 <!-- instagram section end -->
-<!--newsletter section start-->
-<!--newsletter section end-->
+
 <!--footer area start-->
-<footer class="footer_widgets" style="background-color:#f1f1f1">
+<footer class="footer_widgets">
     <div class="container">
         <div class="row">
             <div class="col-lg-5 col-md-5 col-sm-5">
@@ -282,7 +282,7 @@
                             <span>our location</span>
                             <p>@MySettings.Address</p>
                         </div>
-                         <div class="footer_contact_list">
+                        <div class="footer_contact_list">
                             <span>24/7 hotline:</span>
                             <a href="tel:@MySettings.Phone">@MySettings.Phone</a>
                         </div>
@@ -338,12 +338,12 @@
                             </ul>
                         </div>
                         <div class="copyright_right">
-                            <p>@MySettings.CopyRight</p>
+                            <p>©2021 <span>Uthr</span>. made with <i class="ion-heart"></i>  by <a href="https://hasthemes.com" target="_blank">HasThemes</a></p>
                         </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 </footer>
 <!--footer area end-->
