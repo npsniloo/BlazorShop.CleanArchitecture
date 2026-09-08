@@ -10,17 +10,17 @@ namespace eShop.Application.UseCases.Customer_Portal
 {
     public class GetCustomerOrdersUseCase : IGetCustomerOrdersUseCase
     {
-        private readonly IOrderRepository repository;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public GetCustomerOrdersUseCase(IOrderRepository repository)
+        public GetCustomerOrdersUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repository;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task<List<Order>> ExecuteAsync(int userId)
         {
-            var orders = (await repository
-                .GetByFilterAsync(c => c.UserId == userId))
+            var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var orders = (await unitOfWork.Orders.GetByFilterAsync(c => c.UserId == userId))
                 .ToList();
             return orders;
         }

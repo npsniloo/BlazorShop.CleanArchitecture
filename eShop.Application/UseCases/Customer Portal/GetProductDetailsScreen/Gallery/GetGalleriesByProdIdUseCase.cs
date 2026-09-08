@@ -5,16 +5,17 @@ namespace eShop.Application.UseCases.Customer_Portal
 {
     public class GetGalleriesByProdIdUseCase : IGetGalleriesByProdIdUseCase
     {
-        private readonly IRepository<ProductGallery, int> repository;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public GetGalleriesByProdIdUseCase(IRepository<ProductGallery, int> repo)
+        public GetGalleriesByProdIdUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task<List<ProductGallery>> ExecuteAsync(int prodId)
         {
-            var galleries = await repository.GetByFilterAsync(g=>g.ProductId == prodId);
+            var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var galleries = await unitOfWork.ProductGalleries.GetByFilterAsync(g => g.ProductId == prodId);
             return galleries;
         }
     }

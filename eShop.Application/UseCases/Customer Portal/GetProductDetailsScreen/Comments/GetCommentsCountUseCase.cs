@@ -10,15 +10,16 @@ namespace eShop.Application.UseCases.Customer_Portal
 {
     public class GetCommentsCountUseCase : IGetCommentsCountUseCase
     {
-        private readonly ICommentRepository repository;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public GetCommentsCountUseCase(ICommentRepository repo)
+        public GetCommentsCountUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repo;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
         public async Task<int> ExecuteAsync(int prodId)
         {
-            return await repository.CountByProductIdAsync(prodId);
+            var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            return await unitOfWork.Comments.CountByProductIdAsync(prodId);
         }
     }
 }

@@ -10,16 +10,18 @@ namespace eShop.Application.UseCases.Customer_Portal
 {
     public class GetCouponDiscountByCodeUseCase : IGetCouponDiscountByCodeUseCase
     {
-        private readonly IRepository<Coupon, int> repository;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public GetCouponDiscountByCodeUseCase(IRepository<Coupon, int> repository)
+
+        public GetCouponDiscountByCodeUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repository;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task<CouponDiscountDto?> ExecuteAsync(string code)
         {
-            var coupons = await repository.GetByFilterAsync(c => c.Code == code);
+            var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var coupons = await unitOfWork.Coupons.GetByFilterAsync(c => c.Code == code);
             if (!coupons.Any())
                 return null;
             var coupon = coupons.First();

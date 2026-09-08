@@ -11,7 +11,7 @@ namespace eShop.Application.Interfaces.Repository
     public interface IProductRepository : IRepository<Product, int>
     {
         Task<Product?> GetProductByIdWithGalleries(int id);
-        Task<List<Product>> GetNewProducts(int count);
+        Task<List<Product>> GetNewProductsAsync(int count);
         Task<List<BestSellingProduct>> GetBestSellingProductsAsync(int count);
         Task AddProductWithProductGalleriesAsync(Product product);
         void RemoveProductWithProductGalleries(Product product);

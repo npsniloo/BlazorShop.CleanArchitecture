@@ -10,21 +10,21 @@ namespace eShop.Application.UseCases.Customer_Portal
 {
     public class GetCustomerOrderByIdUseCase : IGetCustomerOrderByIdUseCase
     {
-        private readonly IOrderRepository orderRepository;
-        private readonly IRepository<OrderDetail,int> orderDetailRepository;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public GetCustomerOrderByIdUseCase(IOrderRepository orderRepository, IRepository<OrderDetail, int> orderDetailRepository)
+        public GetCustomerOrderByIdUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.orderRepository = orderRepository;
-            this.orderDetailRepository = orderDetailRepository;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task<List<OrderDetail>> ExecuteAsync(int orderId, int userId)
         {
-            var order = await orderRepository.GetByIdAsync(orderId);
+            var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var order = await unitOfWork.Orders.GetByIdAsync(orderId);
             if (order == null || order.UserId != userId)
                 throw new Exception("Order not found");
-            var orderDetails = (await orderDetailRepository
+
+            var orderDetails = (await unitOfWork.OrderDetails
                  .GetByFilterAsync(o => o.OrderId == orderId))
                  .ToList();
             return orderDetails;

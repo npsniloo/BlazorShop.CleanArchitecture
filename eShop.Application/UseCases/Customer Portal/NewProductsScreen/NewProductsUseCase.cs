@@ -10,16 +10,17 @@ namespace eShop.Application.UseCases.Customer_Portal.NewProductsScreen
 {
     public class NewProductsUseCase : INewProductsUseCase
     {
-        private IProductRepository repository;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public NewProductsUseCase(IProductRepository repository)
+        public NewProductsUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repository;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task<List<Product>> ExecuteAsync(int count)
         {
-            var products = await repository.GetNewProducts(count);
+            var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var products = await unitOfWork.Products.GetNewProductsAsync(count);
             return products;
         }
     }

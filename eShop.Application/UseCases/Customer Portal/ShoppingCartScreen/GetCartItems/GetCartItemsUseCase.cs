@@ -25,6 +25,7 @@ namespace eShop.Application.UseCases.Customer_Portal
                 Id = item.Id,
                 ProductId = item.ProductId,
                 ProductTitle = item.ProductTitle,
+                ProductImage = item.ProductImage,
                 Count = item.Count,
                 ProductPrice = item.ProductPrice,
                 ProductDiscount = item.ProductDiscount,

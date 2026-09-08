@@ -8,21 +8,23 @@ namespace eShop.Application.UseCases.Customer_Portal
 {
     public class SearchProductUseCase : ISearchProductUseCase
     {
-        private readonly IRepository<Product, int> repository;
-        public SearchProductUseCase(IRepository<Product, int> repository)
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+        public SearchProductUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repository;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
 
         public async Task<List<Product>> Execute(int pageSize, int pageNumber, string? nameFilter)
         {
+            await using var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+
             if (string.IsNullOrWhiteSpace(nameFilter))
             {
-                return await repository.GetPagedAsync(pageNumber, pageSize);
+                return await unitOfWork.Products.GetPagedAsync(pageNumber, pageSize);
             }
             Expression<Func<Product, bool>> filter = p => string.IsNullOrEmpty(nameFilter) || 
             (p.Title!=null && p.Title.Contains(nameFilter));
-            return await repository.GetPagedAsync(filter, pageNumber, pageSize);
+            return await unitOfWork.Products.GetPagedAsync(filter, pageNumber, pageSize);
         }
     }
 }

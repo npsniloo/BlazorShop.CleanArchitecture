@@ -10,16 +10,17 @@ namespace eShop.Application.UseCases.Customer_Portal
 {
     public class GetShippingPriceUseCase : IGetShippingPriceUseCase
     {
-        private readonly IRepository<Setting,int> repository;
+        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-        public GetShippingPriceUseCase(IRepository<Setting, int> repository)
+        public GetShippingPriceUseCase(IUnitOfWorkFactory unitOfWorkFactory)
         {
-            this.repository = repository;
+            this._unitOfWorkFactory = unitOfWorkFactory;
         }
-
+            
         public async Task<decimal?> Execute()
         {
-           var setting = await repository.GetByIdAsync(1);
+            var unitOfWork = await _unitOfWorkFactory.CreateAsync();
+            var setting = await unitOfWork.Settings.GetByIdAsync(1);
             if (setting == null)
                 throw new Exception("shipping price not found");
             return setting.Shipping;
