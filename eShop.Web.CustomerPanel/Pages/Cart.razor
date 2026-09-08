@@ -1,7 +1,8 @@
 ﻿@page "/cart"
-@using BlazorBootstrap
-@using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+@using BlazorBootstrap
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
 @using eShop.Web.CustomerPanel.ViewModels
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IGetCartItemsUseCase GetCartItemsUseCase
@@ -12,6 +13,8 @@
 
 @rendermode InteractiveServer
 
+@attribute [Authorize]
+
 <div class="shopping_cart_area" style="margin-top:200px">
     <div class="container">
         @if (Model.Any())
@@ -21,7 +24,7 @@
                     <div class="col-12">
                         <div class="cart_page_tabel">
                             <table>
-                                <thead>
+                                <thead class="w-100">
                                     <tr>
                                         <th>Product </th>
                                         <th>Information</th>
@@ -35,8 +38,10 @@
                                     {
                                         <tr class="border-top">
                                             <td>
-                                                <div class="cart_product_thumb">
-                                                    <img src="/images/products/@item.ImageName" alt="@item.Title">
+                                                <div>
+                                                    <img class="rounded object-fit-cover"
+                                                         width="70"
+                                                         height="70" src="/images/products/@item.ImageName" alt="@item.Title">
                                                 </div>
                                             </td>
                                             <td>

@@ -1,6 +1,6 @@
 ﻿
 <Tabs>
-    <Tab Title="توضیحات" Active="true">
+    <Tab Title="Product Description" Active="true">
         <Content>
             <div class="product_info_content">
                 @((MarkupString)(Product.FullDesc?.Replace("\n", "<br/>")))
@@ -8,7 +8,7 @@
             </div>
         </Content>
     </Tab>
-    <Tab Title="نظرات">
+    <Tab Title="Reviews">
         <Content>
            <CommentComponent Product="@Product" />
         </Content>

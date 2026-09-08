@@ -30,7 +30,7 @@
                     <EditForm Model="Order" OnValidSubmit="SubmitOrder">
                         <FluentValidator Validator="Validator" />
 
-                        <h3>آدرس</h3>
+                        <h3>Billing Details</h3>
                         <div class="checkout_form_input">
                             @* <label>country <span>*</span></label> *@
                             @* <InputSelect @bind-Value="Order.Country" class="select_option" name="کشور" id="country">
@@ -113,7 +113,7 @@
                                 <thead>
                                     <tr>
                                         <th>Product</th>
-                                        <th class="text-right">مجموع</th>
+                                        <th class="text-right">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -151,7 +151,7 @@
                                         </tr>
                                     }
                                     <tr class="order_total">
-                                        <th>مجموع مبلغ سفارش</th>
+                                        <th>Total Order Amount</th>
                                         @{
                                             var orderTotal = (Products.Sum(x => x.RowSum) + Order.Shipping.GetValueOrDefault(0)) - Order.CouponDiscount.GetValueOrDefault(0);
                                         }
