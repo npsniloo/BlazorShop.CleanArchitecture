@@ -23,6 +23,7 @@ namespace eShop.Infrastructure.Repository
             var items = await (from item in dbContext.Carts
                                join p in dbContext.Products
                                on item.ProductId equals p.Id
+                               where item.UserId == userId
                                select new CartItemReadModel
                                {
                                    Id = item.Id,
