@@ -5,7 +5,7 @@ A production-ready E-commerce platform built with Blazor Server and .NET, implem
 
 [![.NET 8/9](https://img.shields.io/badge/.NET-8.0/9.0-512bd4)](https://dotnet.microsoft.com/)
 [![Blazor](https://img.shields.io/badge/UI-Blazor%20Server-512bd4)](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor)
-![Auth](https://img.shields.io/badge/Auth-Cookie%20Based-blue)
+![Auth](https://img.shields.io/badge/Auth-JWT%20Based-blue)
 ![Authorization](https://img.shields.io/badge/Auth-Claims%20%26%20Roles-success)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -27,7 +27,7 @@ A modern, full-stack E-commerce solution designed with **Clean Architecture** pr
 
 ### Technical Excellence
 - **Architecture:** Clean Architecture (Domain, Application, Infrastructure, WebUI).
-- **Security:** Cookie-based authentication with secure password recovery (Email-based codes).
+- **Security:** JWT-based authentication with secure password recovery (Email-based codes).
 - **Data:** SQL Server with EF Core (Code-First approach).
 - **Patterns:** Repository Pattern, Dependency Injection, and DTO mapping.
 
@@ -36,7 +36,7 @@ A modern, full-stack E-commerce solution designed with **Clean Architecture** pr
 - **Backend:** .NET (9.0) / ASP.NET Core
 - **Database:** SQL Server
 - **ORM:** Entity Framework Core (9.0)
-- **Authentication:** ASP.NET Core Cookie Authentication
+- **Authentication:** JWT (JSON Web Token) Authentication
 - **Authorization:** Claims and Role-based Access Control
 - **Password Recovery:** Email-based reset code
 
@@ -57,9 +57,9 @@ The project is divided into four main layers to ensure maintainability and testa
 ## 💻 Getting Started
 1. Clone the repository: `git clone https://github.com/YourUsername/BlazorShop.CleanArchitecture.git`
 2. Update the connection string in `appsettings.json`.
-3. Run `Update-Database` via Package Manager Console to initialize SQL Server.
-4. Press `F5` to run the application.
+3. Configure JWT settings (issuer, audience, and signing key) in `appsettings.json`.
+4. Run `Update-Database` via Package Manager Console to initialize SQL Server.
+5. Press `F5` to run the application.
 
 ---
 *Developed by Niloofar Pahlevan – Senior .NET Developer*
-
