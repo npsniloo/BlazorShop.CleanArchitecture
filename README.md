@@ -67,5 +67,8 @@ The project is divided into four main layers to ensure maintainability and testa
 4. Run `Update-Database` via Package Manager Console to initialize SQL Server.
 5. Press `F5` to run the application.
 
+## 🙏 Acknowledgements
+UI built on top of the free Uther HTML theme.
+
 ---
 *Developed by Niloofar Pahlevan – Senior .NET Developer*
